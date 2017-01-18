@@ -1,0 +1,6 @@
+연구실 컴퓨터의 하드웨어 한계(32bit,4g ram)로 인해 아래의 링크를 참조하여 파일을 일부 수정하였음.
+연구실 외의 컴퓨터에서 가동했을때 에러 발생시 참고 바람
+
+http://www.masterqna.com/android/58911/over-65k-methods-%EA%B0%80-%EB%84%98%EC%96%B4%EA%B0%94%EC%9D%84%EB%95%8C-%EC%83%9D%EA%B8%B0%EB%8A%94-%EB%AC%B8%EC%A0%9C%EB%A1%9C-%EB%8F%84%EC%9B%80%EC%9D%B4-%ED%95%84%EC%9A%94%ED%95%A9%EB%8B%88%EB%8B%A4-%E3%85%A0
+
+https://developer.android.com/studio/build/multidex.html?hl=ko
