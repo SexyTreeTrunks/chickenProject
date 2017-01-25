@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_info"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.chicken_ar.InfoActivity"
+    android:orientation="vertical">
+    <ImageView
+        android:id="@+id/buildingImg"
+        android:layout_width="match_parent"
+        android:layout_height="250dp" />
+
+    <TextView
+        android:id="@+id/buildingName"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#722116"
+        android:text=""
+        android:textSize="20dp"
+        android:gravity="left|center"
+        android:paddingLeft="20dp"/>
+
+    <TextView
+        android:id="@+id/buildingInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFF"
+        android:padding="20dp"
+        android:text=""
+        android:textColor="#722116"
+        android:textSize="20dp"
+        android:scrollbars="vertical"/>
+</LinearLayout>

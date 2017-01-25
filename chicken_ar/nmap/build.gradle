@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('com.naver.maps.open-naver-map-api-2.1.2_6d63c8e7432f5396fa32dab7d732ac2067cb3053.jar'))

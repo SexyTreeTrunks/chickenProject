@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.chicken_ar.CameraActivity">
+
+    <TextureView
+        android:id="@+id/cameraTextureView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollX="30dp"
+        android:background="@drawable/duck1"
+        android:visibility="gone"
+        android:id="@+id/duck1" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollX="30dp"
+        android:background="@drawable/duck1"
+        android:visibility="gone"
+        android:id="@+id/duck2" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollX="30dp"
+        android:background="@drawable/duck1"
+        android:visibility="gone"
+        android:id="@+id/duck3" />
+
+
+
+</FrameLayout>
