@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import static android.content.Context.SENSOR_SERVICE;
 
-/**
+/**`
  * Created by DongHyun on 2016-12-20.
  */
 
@@ -51,7 +51,7 @@ public class Orientation implements SensorEventListener {
         bi = new BuildingInfo[3];
 
         bi[2] = new BuildingInfo(127.075201, 37.549441, 0);//학생회관 37.549441, 127.075201 ->충무
-        bi[1] = new BuildingInfo(127.073152, 37.550276, 0);//광개토 37.550276, 127.073152 ->
+        bi[1] = new BuildingInfo(126.963361, 37.545680, 0);//광개토 37.550276, 127.073152 ->
         bi[0] = new BuildingInfo(127.073952, 37.552261,0);//충무관 ->학생
 
         width = ma.dm.widthPixels;
@@ -98,6 +98,7 @@ public class Orientation implements SensorEventListener {
 
         m_sensor_manager.registerListener(this, m_ot_sensor, SensorManager.SENSOR_DELAY_UI);
     }
+
 
     @Override
     public void onSensorChanged(SensorEvent event) {

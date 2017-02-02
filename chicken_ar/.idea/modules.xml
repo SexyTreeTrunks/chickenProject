@@ -3,8 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/chicken_ar2.iml" filepath="$PROJECT_DIR$/chicken_ar2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/nmap/nmap.iml" filepath="$PROJECT_DIR$/nmap/nmap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/chicken_ar.iml" filepath="$PROJECT_DIR$/chicken_ar.iml" />
     </modules>
   </component>
 </project>
