@@ -23,22 +23,24 @@ public class InfoActivity extends AppCompatActivity {
         int index = intent.getIntExtra("index",1);
 
         // 건물 이미지
-        int gwangImg = R.drawable.gwang1;
+        //int gwangImg = R.drawable.gwang1;
+        int gwangImg = R.drawable.duck1;
         int studenthallImg = R.drawable.studenthall1;
 
         // 건물 이름
-        String gwangName = "광개토관";
+        String gwangName = "눈송이";
         String studentHallName="학생회관";
 
         // 건물 정보
-        String gwangContents = "경영학과가 주로 사용하는 건물이며 강의실 뿐 아니라 다양한 편의시설을 갖추고 있다.\n" +
+        String gwangContents = "눈송이";
+                /*"경영학과가 주로 사용하는 건물이며 강의실 뿐 아니라 다양한 편의시설을 갖추고 있다.\n" +
                 "5층에는 경영학과 학생들이 운영하는 카페가 있다.\n\n"+
                 "지하 3,4층 : 주차장\n"+
                 "지하 2층 : 컨벤션 센터\n"+
                 "지하 1층 : 중소회의실, 전시장, 카페, 편의점\n" +
                 "지상 1층 ~ 13층 : 강의실 및 연구실\n"+
                 "지상 14층 : 외국인 학생 기숙사\n"+
-                "지상 15층 : 식당(찬), 소극장";
+                "지상 15층 : 식당(찬), 소극장";*/
         String studentHallContents = "학생들을 위한 건물로 동아리실과 다양한 편의시설을 갖추고 있다.\n\n" +
                 "지하 2층 : 체력단련실, 샤워실, 음악 연습실, 동아리실\n" +
                 "지하 1층 : 대공연장, 소공연장, 학생식당 \n" +

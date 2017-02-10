@@ -11,6 +11,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by DongHyun on 2016-12-20.
@@ -178,8 +180,10 @@ public class Gpsinfo extends Service implements LocationListener {
         return null;
     }
 
+
+    //TODO : 원래는 빈칸이였으나 집어넣어봄
     public void onLocationChanged(Location location) {
-        // TODO Auto-generated method stub
+        getLocation();
 
     }
 

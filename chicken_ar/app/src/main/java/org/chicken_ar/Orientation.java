@@ -51,7 +51,7 @@ public class Orientation implements SensorEventListener {
         bi = new BuildingInfo[3];
 
         bi[2] = new BuildingInfo(127.075201, 37.549441, 0);//학생회관 37.549441, 127.075201 ->충무
-        bi[1] = new BuildingInfo(126.963361, 37.545680, 0);//광개토 37.550276, 127.073152 ->
+        bi[1] = new BuildingInfo(126.964793, 37.545724, 0);//광개토 37.550276, 127.073152 ->
         bi[0] = new BuildingInfo(127.073952, 37.552261,0);//충무관 ->학생
 
         width = ma.dm.widthPixels;
@@ -63,8 +63,8 @@ public class Orientation implements SensorEventListener {
         img[0] = (ImageView)ma.findViewById(R.id.duck3); //학생
 
         for(int i=0;i<3;i++) {
-            img[i].getLayoutParams().width = 500;
-            img[i].getLayoutParams().height = 500;
+            img[i].getLayoutParams().width = 200;
+            img[i].getLayoutParams().height = 200;
 
             imgWidth[i]=(float) img[i].getLayoutParams().width;
             imgHeight[i]=(float) img[i].getLayoutParams().height;
@@ -104,66 +104,76 @@ public class Orientation implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
 
         if(event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
-                for (int i = 0; i < 3; i++) {
-                    if (isBuildingVisible(my, bi[i], event.values[0], event.values[1])) {
-                        double disX = bi[i].lat - my.lat;
-                        double disY = bi[i].lon - my.lon;
+            //TODO:세줄추가함
+            gpsinfo.getLocation();
+            my.lon = gpsinfo.getLongitude();
+            my.lat = gpsinfo.getLatitude();
+            Toast.makeText(cameraActivity.getApplicationContext(), "위치 바뀜", Toast.LENGTH_LONG).show();
 
-                        double offset,hAngle;
-                        if(disX<0)
-                        {
-                            disX=-disX;
-                            if(disY<0)
-                            {
-                                disY=-disY;
-                                offset = Math.atan(disY/disX)*180/ Math.PI;
-                                hAngle= 270 -offset;
-                            }
-                            else
-                            {
-                                offset = Math.atan(disY/disX)*180/ Math.PI;
-                                hAngle= 270 +offset;
-                            }
+            for (int i = 0; i < 3; i++) {
+                if (isBuildingVisible(my, bi[i], event.values[0], event.values[1])) {
+                    double disX = bi[i].lat - my.lat;
+                    double disY = bi[i].lon - my.lon;
+
+                    double offset,hAngle;
+                    if(disX<0) {
+                        disX=-disX;
+                        if(disY<0) {
+                            disY=-disY;
+                            offset = Math.atan(disY/disX)*180/ Math.PI;
+                            hAngle= 270 -offset;
                         }
-                        else
-                        {
-                            if(disY<0)
-                            {
-                                disY=-disY;
-                                offset = Math.atan(disY/disX)*180/ Math.PI;
-                                hAngle= 90 +offset;
-                            }
-                            else
-                            {
-                                offset = Math.atan(disY/disX)*180/ Math.PI;
-                                hAngle= 90 - offset;
-                            }
+                        else {
+                            offset = Math.atan(disY/disX)*180/ Math.PI;
+                            hAngle= 270 +offset;
                         }
+                    }
+                    else {
+                        if(disY<0) {
+                            disY=-disY;
+                            offset = Math.atan(disY/disX)*180/ Math.PI;
+                            hAngle= 90 +offset;
+                        }
+                        else {
+                            offset = Math.atan(disY/disX)*180/ Math.PI;
+                            hAngle= 90 - offset;
+                        }
+                    }
 
+                    double degree = event.values[0] - hAngle;
 
-                        double degree = event.values[0] - hAngle;
+                    if (180 < degree)
+                        degree -= 360;
+                    else if (degree < -180)
+                        degree += 360;
 
-                        if (180 < degree)
-                            degree -= 360;
-                        else if (degree < -180)
-                            degree += 360;
+                    //Log.i("hAngle : " + ((int) event.values[0] - hAngle) + viewAngle, "기울기 : " + (int) event.values[1]);
+                    //Log.i("값 : ", " " + width * ((viewAngle - (degree)) / (viewAngle * 2)));
+                    //Log.i("event[0] : " + event.values[0], "hAngle : " + hAngle);
+                    //Log.i("half : " + (event.values[0] - hAngle), "asdasdas");
+                    Log.i(i+"","번째");
 
-                        img[i].setVisibility(View.VISIBLE);
-                        //Log.i("hAngle : " + ((int) event.values[0] - hAngle) + viewAngle, "기울기 : " + (int) event.values[1]);
-                        //Log.i("값 : ", " " + width * ((viewAngle - (degree)) / (viewAngle * 2)));
-                        //Log.i("event[0] : " + event.values[0], "hAngle : " + hAngle);
-                        //Log.i("half : " + (event.values[0] - hAngle), "asdasdas");
-                        Log.i(i+"","번째");
+                    //TODO:임시로 지정한 그림사이즈 변경법
+                    //500x500사이즈인 그림을 멀면 멀수록 점점 작게 한다. 단, 범위를 너무 벗어나면 그림이 커진다.
+                    img[1].setVisibility(View.VISIBLE);
+                     if(bi[1].lon - my.lon > 0) {
+                         img[1].getLayoutParams().width = 500 - (int) ((bi[1].lon - my.lon) * 500000);
+                         img[1].getLayoutParams().height = 500 - (int) ((bi[1].lon - my.lon) * 500000);
+                     }
+                     else {
+                         img[1].getLayoutParams().width = 500 - (int) (-(bi[1].lon - my.lon) * 500000);
+                         img[1].getLayoutParams().height = 500 - (int) (-(bi[1].lon - my.lon) * 500000);
+                     }
 
-                        Log.i(i+"",(width - imgWidth[i]) / 2 + width * (-(degree) / viewAngle)+"");
-                        Log.i(i+"",(height - imgHeight[i]) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height)+"");
-                        img[i].setX((float) ((width - imgWidth[i]) / 2 + width * (-(degree) / viewAngle)));
-                        img[i].setY((height - imgHeight[i]) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height));
+                    Log.i(i+"",(width - imgWidth[i]) / 2 + width * (-(degree) / viewAngle)+"");
+                    Log.i(i+"",(height - imgHeight[i]) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height)+"");
+                    img[i].setX((float) ((width - imgWidth[i]) / 2 + width * (-(degree) / viewAngle)));
+                    img[i].setY((height - imgHeight[i]) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height));
 //                img.setX(width*((viewAngle - (event.values[0] - hAngle)) /(viewAngle*2)) - imgWidth);
 //                img.setY(height*(-(90 + (int)event.values[1])/(viewAngle*2)) - imgHeight);
 
-                    }
                 }
+            }
 
           /*  String str;
             // 첫번째 데이터인 방위값으로 문자열을 구성하여 텍스트뷰에 출력한다.
