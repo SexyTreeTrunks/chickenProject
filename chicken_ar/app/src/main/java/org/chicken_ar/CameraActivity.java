@@ -10,10 +10,16 @@ import android.view.TextureView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.w3c.dom.Document;
+
+import java.util.ArrayList;
+
 public class CameraActivity extends AppCompatActivity {
     private TextureView mCameraTextureView;
     private Preview mPreview;
-
+    private GpsDirectionInfo gpsDirectionInfo;
+    private TmapClient tmapClient;
+    private ArrayList<Location> pathPoints;
     DisplayMetrics dm;
 
     @Override
@@ -25,7 +31,14 @@ public class CameraActivity extends AppCompatActivity {
         mCameraTextureView = (TextureView) findViewById(R.id.cameraTextureView);
         mPreview = new Preview(this, mCameraTextureView);
 
-        new GpsDirectionInfo(this.getApplicationContext(), this);
+        gpsDirectionInfo = new GpsDirectionInfo(this.getApplicationContext(), this);
+
+        try {
+            tmapClient.execute(Double.toString(gpsDirectionInfo.lon),Double.toString(gpsDirectionInfo.lat)).get();
+            pathPoints = tmapClient.getPathPoints();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

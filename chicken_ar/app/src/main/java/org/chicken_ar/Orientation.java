@@ -66,8 +66,8 @@ public class Orientation implements SensorEventListener {
         img[1] = (ImageView)ma.findViewById(R.id.duck1); //충무관
         img[0] = (ImageView)ma.findViewById(R.id.duck3); //학생
 
-        txtLat = (TextView) ma.findViewById(R.id.Latitude);
-        txtLon = (TextView) ma.findViewById(R.id.Longitude);
+        //txtLat = (TextView) ma.findViewById(R.id.Latitude);
+        //txtLon = (TextView) ma.findViewById(R.id.Longitude);
 
         for(int i=0;i<3;i++) {
             img[i].getLayoutParams().width = 200;
