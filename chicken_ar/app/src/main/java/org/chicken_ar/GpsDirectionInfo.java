@@ -1,39 +1,55 @@
 package org.chicken_ar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
-/**`
- * Created by DongHyun on 2016-12-20.
- */
+public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
+    private final Context mContext;
 
-//public class Orientation extends Thread implements SensorEventListener {
-public class Orientation implements SensorEventListener {
-    //TextView[] tv;
+    // 현재 GPS 사용유무
+    boolean isGPSEnabled = false;
+
+    // 네트워크 사용유무
+    boolean isNetworkEnabled = false;
+
+    // GPS 상태값
+    boolean isGetLocation = false;
+
+    Location location;
+    double lat; // 위도
+    double lon;
+
+    // 최소 GPS 정보 업데이트 거리 1미터
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
+
+    // 최소 GPS 정보 업데이트 시간 밀리세컨이므로 1초
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 1;
+
+    //=====================================================
+
     SensorManager m_sensor_manager;
     Sensor m_ot_sensor;
     CameraActivity cameraActivity;
 
     ImageView[] img = new ImageView[3];
 
-    Gpsinfo gpsinfo;
-
     BuildingInfo[] bi;
     BuildingInfo my;
-
-    private TextView txtLat;
-    private TextView txtLon;
 
     float viewAngle = 20;
 
@@ -44,13 +60,15 @@ public class Orientation implements SensorEventListener {
     float[] imgWidth = new float[3];
     float[] imgHeight = new float[3];
 
+    protected LocationManager locationManager;
 
-    public Orientation(CameraActivity ma)
-    {
+    public GpsDirectionInfo(Context context, CameraActivity ma) {
+        this.mContext = context;
+        getLocation();
+
         cameraActivity =ma;
-        gpsinfo = new Gpsinfo(cameraActivity.getApplicationContext());
 
-        my = new BuildingInfo(gpsinfo.getLongitude(),gpsinfo.getLatitude(),0);
+        my = new BuildingInfo(lon, lat, 0);
 
         bi = new BuildingInfo[3];
 
@@ -61,13 +79,9 @@ public class Orientation implements SensorEventListener {
         width = ma.dm.widthPixels;
         height = ma.dm.heightPixels;
 
-
         img[2] = (ImageView)ma.findViewById(R.id.duck2); //광개토
         img[1] = (ImageView)ma.findViewById(R.id.duck1); //충무관
         img[0] = (ImageView)ma.findViewById(R.id.duck3); //학생
-
-        txtLat = (TextView) ma.findViewById(R.id.Latitude);
-        txtLon = (TextView) ma.findViewById(R.id.Longitude);
 
         for(int i=0;i<3;i++) {
             img[i].getLayoutParams().width = 200;
@@ -86,9 +100,9 @@ public class Orientation implements SensorEventListener {
                     //if(finali==0)
                     //    Toast.makeText(cameraActivity.getApplicationContext(),"더 가까이 가서 선택해주세요",Toast.LENGTH_SHORT).show();
                     //else{
-                        Intent intent = new Intent(cameraActivity.getApplicationContext(), InfoActivity.class);
-                        intent.putExtra("index", finali);
-                        cameraActivity.startActivity(intent);
+                    Intent intent = new Intent(cameraActivity.getApplicationContext(), InfoActivity.class);
+                    intent.putExtra("index", finali);
+                    cameraActivity.startActivity(intent);
                     //}
                 }
             });
@@ -107,15 +121,70 @@ public class Orientation implements SensorEventListener {
         m_sensor_manager.registerListener(this, m_ot_sensor, SensorManager.SENSOR_DELAY_UI);
     }
 
+    public Location getLocation() {
+        try {
+            locationManager = (LocationManager) mContext
+                    .getSystemService(LOCATION_SERVICE);
+
+            // GPS 정보 가져오기
+            isGPSEnabled = locationManager
+                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+            // 현재 네트워크 상태 값 알아오기
+            isNetworkEnabled = locationManager
+                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+            if (!isGPSEnabled && !isNetworkEnabled) {
+                // GPS 와 네트워크사용이 가능하지 않을때 소스 구현
+                return null;
+            } else {
+                this.isGetLocation = true;
+                // 네트워크 정보로 부터 위치값 가져오기
+                if (isNetworkEnabled) {
+                    locationManager.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER,
+                            MIN_TIME_BW_UPDATES,
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+
+                    if (locationManager != null) {
+                        location = locationManager
+                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        if (location != null) {
+                            // 위도 경도 저장
+                            lat = location.getLatitude();
+                            lon = location.getLongitude();
+                        }
+                    }
+                }
+
+                if (isGPSEnabled) {
+                    if (location == null) {
+                        locationManager.requestLocationUpdates(
+                                LocationManager.GPS_PROVIDER,
+                                MIN_TIME_BW_UPDATES,
+                                MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                        if (locationManager != null) {
+                            location = locationManager
+                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            if (location != null) {
+                                lat = location.getLatitude();
+                                lon = location.getLongitude();
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return location;
+    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        //TODO:두줄추가함
-        my.lon = gpsinfo.lon;
-        my.lat = gpsinfo.lat;
-
-        txtLat.setText(String.valueOf(my.lon));
-        txtLon.setText(String.valueOf(my.lat));
+        my.lon = lon;
+        my.lat = lat;
 
         if(event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
             for (int i = 0; i < 3; i++) {
@@ -208,18 +277,6 @@ public class Orientation implements SensorEventListener {
         }
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
-
-    @Override
-    protected void finalize() throws Throwable {
-        m_sensor_manager.unregisterListener(this);
-        super.finalize();
-    }
-
     public boolean isBuildingVisible(BuildingInfo myPos, BuildingInfo buildingPos, float way, float grad)
     {
         double disX = buildingPos.lat - my.lat;
@@ -269,5 +326,33 @@ public class Orientation implements SensorEventListener {
         }
         else
             return false;
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        lat = location.getLatitude();
+        lon = location.getLongitude();
+        my.lat = location.getLatitude();
+        my.lon = location.getLongitude();
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
     }
 }

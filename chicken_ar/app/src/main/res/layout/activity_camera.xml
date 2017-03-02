@@ -34,6 +34,4 @@
         android:visibility="gone"
         android:id="@+id/duck3" />
 
-
-
 </FrameLayout>

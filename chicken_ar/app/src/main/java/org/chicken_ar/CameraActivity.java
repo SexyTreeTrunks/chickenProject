@@ -1,9 +1,14 @@
 package org.chicken_ar;
 
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.TextureView;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class CameraActivity extends AppCompatActivity {
     private TextureView mCameraTextureView;
@@ -20,8 +25,7 @@ public class CameraActivity extends AppCompatActivity {
         mCameraTextureView = (TextureView) findViewById(R.id.cameraTextureView);
         mPreview = new Preview(this, mCameraTextureView);
 
-        new Orientation(this);
-
+        new GpsDirectionInfo(this.getApplicationContext(), this);
 
     }
 

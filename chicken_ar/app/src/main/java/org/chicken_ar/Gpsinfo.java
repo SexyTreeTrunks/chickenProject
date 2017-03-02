@@ -36,11 +36,11 @@ public class Gpsinfo extends Service implements LocationListener {
     double lat; // 위도
     double lon;
 
-    // 최소 GPS 정보 업데이트 거리 10미터
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
+    // 최소 GPS 정보 업데이트 거리 1미터
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1;
 
-    // 최소 GPS 정보 업데이트 시간 밀리세컨이므로 1분
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
+    // 최소 GPS 정보 업데이트 시간 밀리세컨이므로 1초
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 1;
 
     protected LocationManager locationManager;
 
@@ -180,25 +180,20 @@ public class Gpsinfo extends Service implements LocationListener {
         return null;
     }
 
-
-    //TODO : 원래는 빈칸이였으나 집어넣어봄
     public void onLocationChanged(Location location) {
-        getLocation();
-
+        lat = location.getLatitude();
+        lon = location.getLongitude();
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        // TODO Auto-generated method stub
 
     }
 
     public void onProviderEnabled(String provider) {
-        // TODO Auto-generated method stub
 
     }
 
     public void onProviderDisabled(String provider) {
-        // TODO Auto-generated method stub
 
     }
 }
