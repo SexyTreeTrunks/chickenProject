@@ -170,7 +170,7 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
                 String[] splitedLocationString = coordinates.split(" ");
                 for (int j = 0; j < splitedLocationString.length; j++) {
                     String[] locationString = splitedLocationString[j].split(",");
-                    Location location = new Location();
+                    Location location = new Location("provider");
                     location.setLongitude(Double.valueOf(locationString[0]));
                     location.setLatitude(Double.valueOf(locationString[1]));
                     pathPoints.add(location);
