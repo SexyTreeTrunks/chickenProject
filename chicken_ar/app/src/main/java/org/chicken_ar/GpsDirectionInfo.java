@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
@@ -339,6 +340,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         lon = location.getLongitude();
         my.lat = location.getLatitude();
         my.lon = location.getLongitude();
+        Toast.makeText(mContext.getApplicationContext(), "lon: " + lon + ",lat: " + lat, Toast.LENGTH_SHORT).show();
+        //Log.i("****GpsDirct info", "onLocationChange----lon: " + lon + ",lat: " + lat);
     }
 
     @Override

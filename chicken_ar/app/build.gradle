@@ -29,4 +29,6 @@ dependencies {
     compile 'com.android.support:design:22.2.0'
     testCompile 'junit:junit:4.12'
     compile 'com.naver.maps.open:naver-map-api:2.1.2@aar'
+
+    compile files('libs/com.skp.Tmap_1.0.45.jar')
 }
