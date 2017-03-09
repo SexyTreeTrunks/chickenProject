@@ -22,6 +22,8 @@ import java.net.URI;
 import java.security.Provider;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -44,22 +46,11 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
     @Override
     protected Void doInBackground(String... params) {
         try {
-            if (params.length ==2) {
-                Log.i("****TmapClient info", "length 2");
-                connection = (HttpURLConnection) setRequestPayloadURL(params[0], params[1]).toURL().openConnection();
-                setConnectionRequestSetting();
-                setRequestHeader(); //얘는 안써도 상관 무
-                getResponseData();
-                connection.disconnect();
-            } else {
-                //api에 구현된 함수를 이용하는 방법
-                findNearPoiDataByCategory(params[0], params[1], params[2]);
-                //서버에 request를 보내서 데이터를 얻어오는 방법
-                //connection = (HttpURLConnection) setRequestPayloadURL(params[0], params[2], params[3]).toURL().openConnection();
-                //setConnectionRequestSetting();
-                //setRequestHeader(); //얘는 안써도 상관 무
-                //getResponseData();
-            }
+            connection = (HttpURLConnection) setRequestPayloadURL(params[0], params[1]).toURL().openConnection();
+            setConnectionRequestSetting();
+            setRequestHeader(); //얘는 안써도 상관 무
+            getResponseData();
+            connection.disconnect();
         }catch (Exception ex) {
             Log.e("*****TmapClient error","",ex);
         }
@@ -155,6 +146,7 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
     //TODO: Documnet내의 path point 정보 추출해서 ArrayList에 저장하는 코드 구현 필요
     public ArrayList<Location> getPathPoints() {
         Element root = responseDocument.getDocumentElement();
+        pathPoints = new ArrayList<Location>();
         try {
             NodeList nodeList = root.getElementsByTagName("Placemark");
             for (int i = 0; i < nodeList.getLength(); i++) {
@@ -167,13 +159,16 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
                 } else {
                     coordinates = element.getElementsByTagName("Point").item(0).getTextContent();
                 }
-                String[] splitedLocationString = coordinates.split(" ");
-                for (int j = 0; j < splitedLocationString.length; j++) {
-                    String[] locationString = splitedLocationString[j].split(",");
+
+                StringTokenizer splitedLocationTokens = new StringTokenizer(coordinates," ");
+                for (int j = 0; splitedLocationTokens.hasMoreElements(); j++) {
+                    StringTokenizer locationTokens = new StringTokenizer(splitedLocationTokens.nextToken(),",");
                     Location location = new Location("provider");
-                    location.setLongitude(Double.valueOf(locationString[0]));
-                    location.setLatitude(Double.valueOf(locationString[1]));
-                    pathPoints.add(location);
+                    for (int k = 0; locationTokens.hasMoreElements(); k++) {
+                        location.setLongitude(Double.valueOf(locationTokens.nextToken()));
+                        location.setLatitude(Double.valueOf(locationTokens.nextToken()));
+                        pathPoints.add(location);
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -182,23 +177,4 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
         return pathPoints;
     }
 
-    public void findNearPoiDataByCategory(String categories, String centerLon, String centerLat) {
-        try {
-            TMapPoint tMapPoint = new TMapPoint(Double.valueOf(centerLat), Double.valueOf(centerLon));
-            TMapData tMapData = new TMapData();
-            poiPoints = tMapData.findAroundNamePOI(tMapPoint, categories);
-        } catch (Exception ex) {
-            Log.e("****TmapClient error", "getNearPoiDataByCategory error");
-        }
-    }
-
-    public ArrayList<TMapPOIItem> getPoiData() {
-        for (int i = 0; i < poiPoints.size(); i++) {
-            Log.i("****TmapClient info", "name: " + poiPoints.get(i).getPOIName());
-            Log.i("****TmapClient info", "lon: " + poiPoints.get(i).frontLon + "lat: " + poiPoints.get(i).frontLat);
-            Log.i("****TmapClient info", "업종명: " + poiPoints.get(i).detailBizName);
-            Log.i("****TmapClient info", "dist: " + poiPoints.get(i).distance);
-        }
-        return poiPoints;
-    }
 }

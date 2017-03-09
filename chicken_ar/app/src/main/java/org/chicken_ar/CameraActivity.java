@@ -46,14 +46,13 @@ public class CameraActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "tmapData 겟또!", Toast.LENGTH_SHORT).show();
             }
             */
-            //tmapClient.execute("127.075201","37.549441");
-            tmapClient.findNearPoiDataByCategory("치킨","127.075201","37.549441");
-            tmapClient.getPoiData();
+            tmapClient.execute("126.964823","37.545801");
+            //tmapClient.findNearPoiDataByCategory("치킨","127.075201","37.549441");
+            //tmapClient.getPoiData();
         } catch (Exception e) {
             Log.e("****CameraActv error","tmapClient execute error");
             e.printStackTrace();
         }
-
         Log.d("****Camera Actv","onCreate 실행");
     }
 
@@ -62,6 +61,7 @@ public class CameraActivity extends AppCompatActivity {
         super.onResume();
         mPreview.onResume();
         Log.d("****Camera Actv", "onResume 실행");
+
         if(tmapClient.getStatus() == AsyncTask.Status.FINISHED)
             pathPoints = tmapClient.getPathPoints();
     }
