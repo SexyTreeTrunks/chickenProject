@@ -57,12 +57,6 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
         return null;
     }
 
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        getPathPoints();
-    }
-
     private void setConnectionRequestSetting() {
         try {
             connection.setRequestMethod("GET");

@@ -15,13 +15,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
 public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     private final Context mContext;
-
+    private ArrayList<Location> pathPoints;
     // 현재 GPS 사용유무
     boolean isGPSEnabled = false;
 
@@ -249,7 +251,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                     Log.i(i+"",(width - imgWidth[i]) / 2 + width * (-(degree) / viewAngle)+"");
                     Log.i(i+"",(height - imgHeight[i]) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height)+"");
                     img[i].setX((float) ((width - imgWidth[i]) / 2 + width * (-(degree) / viewAngle)));
-                    img[i].setY((height - imgHeight[i]) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height));
+                    img[i].setY((height - imgHeight[i]) / 2 + (-((int) (event.values[1] ) + 90) / (float) 90) * (height));
+
 //                img.setX(width*((viewAngle - (event.values[0] - hAngle)) /(viewAngle*2)) - imgWidth);
 //                img.setY(height*(-(90 + (int)event.values[1])/(viewAngle*2)) - imgHeight);
 
@@ -358,4 +361,9 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     public void onProviderDisabled(String s) {
 
     }
+
+    public void getPathPoints(ArrayList<Location> pathPoints) {
+        this.pathPoints = pathPoints;
+    }
+
 }
