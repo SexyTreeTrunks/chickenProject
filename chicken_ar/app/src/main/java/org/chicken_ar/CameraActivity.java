@@ -5,10 +5,15 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.TextureView;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,14 +34,21 @@ public class CameraActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         dm = getApplicationContext().getResources().getDisplayMetrics();
-
         mCameraTextureView = (TextureView) findViewById(R.id.cameraTextureView);
         mPreview = new Preview(this, mCameraTextureView);
 
         //new GpsDirectionInfo(this.getApplicationContext(), this);
         gpsDirectionInfo = new GpsDirectionInfo(this.getApplicationContext(), this);
-        tmapClient = new TmapClient();
+        tmapClient = new TmapClient() {
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                gpsDirectionInfo.getPathPoints(getPathPoints());
+                Log.i("****CameraAtiv","onPostExecute");
+            }
+        };
 
         try {
             /*
@@ -47,12 +59,11 @@ public class CameraActivity extends AppCompatActivity {
             }
             */
             tmapClient.execute("126.964823","37.545801");
-            //tmapClient.findNearPoiDataByCategory("치킨","127.075201","37.549441");
-            //tmapClient.getPoiData();
         } catch (Exception e) {
             Log.e("****CameraActv error","tmapClient execute error");
             e.printStackTrace();
         }
+
         Log.d("****Camera Actv","onCreate 실행");
     }
 
