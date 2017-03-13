@@ -49,11 +49,10 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     ImageView[] img = new ImageView[3];
 
-    BuildingInfo[] bi;
-    BuildingInfo my;
+    BuildingInfo[] buildingLocation;
+    BuildingInfo myLocation;
 
     float viewAngle = 20;
-
 
     float width;
     float height;
@@ -67,15 +66,14 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         this.mContext = context;
         getLocation();
 
-        cameraActivity =ma;
+        cameraActivity = ma;
 
-        my = new BuildingInfo(lon, lat, 0);
+        myLocation = new BuildingInfo(lon, lat, 0);
+        buildingLocation = new BuildingInfo[3];
 
-        bi = new BuildingInfo[3];
-
-        bi[2] = new BuildingInfo(126.963975, 37.545700, 0);//학생회관 37.549441, 127.075201 ->충무    명신관앞
-        bi[1] = new BuildingInfo(126.965632, 37.545147, 0);//광개토 37.550276, 127.073152 ->   달볶이
-        bi[0] = new BuildingInfo(126.965576, 37.545156, 0);//충무관 ->학생  앤티앤스
+        buildingLocation[2] = new BuildingInfo(126.963975, 37.545700, 0);//학생회관 37.549441, 127.075201 ->충무    명신관앞
+        buildingLocation[1] = new BuildingInfo(126.965632, 37.545147, 0);//광개토 37.550276, 127.073152 ->   달볶이
+        buildingLocation[0] = new BuildingInfo(126.965576, 37.545156, 0);//충무관 ->학생  앤티앤스
 
         width = ma.dm.widthPixels;
         height = ma.dm.heightPixels;
@@ -107,18 +105,12 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                     //}
                 }
             });
-
         }
-
-        //img[0].getLayoutParams().width = 200;
-        //img[0].getLayoutParams().height = 200;
-
         // 시스템서비스로부터 SensorManager 객체를 얻는다.
         m_sensor_manager = (SensorManager)ma.getSystemService(SENSOR_SERVICE);
         // SensorManager 를 이용해서 방향 센서 객체를 얻는다.
         m_ot_sensor = m_sensor_manager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         //SensorManager.getOrientation()
-
         m_sensor_manager.registerListener(this, m_ot_sensor, SensorManager.SENSOR_DELAY_UI);
     }
 
@@ -135,10 +127,11 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
             isNetworkEnabled = locationManager
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-            if (!isGPSEnabled && !isNetworkEnabled) {
+            if(!isGPSEnabled && !isNetworkEnabled) {
                 // GPS 와 네트워크사용이 가능하지 않을때 소스 구현
                 return null;
-            } else {
+            }
+            else {
                 this.isGetLocation = true;
                 // 네트워크 정보로 부터 위치값 가져오기
                 if (isNetworkEnabled) {
@@ -184,76 +177,67 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        my.lon = lon;
-        my.lat = lat;
-
         if(event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
             for (int i = 0; i < 3; i++) {
-                if (isBuildingVisible(my, bi[i], event.values[0], event.values[1])) {
-                    double disX = bi[i].lat - my.lat;
-                    double disY = bi[i].lon - my.lon;
-
-                    double offset,hAngle;
-                    if(disX<0) {
-                        disX=-disX;
-                        if(disY<0) {
-                            disY=-disY;
-                            offset = Math.atan(disY/disX)*180/ Math.PI;
-                            hAngle= 270 -offset;
-                        }
-                        else {
-                            offset = Math.atan(disY/disX)*180/ Math.PI;
-                            hAngle= 270 +offset;
-                        }
+                //if (isBuildingVisible(myLocation, buildingLocation[i], event.values[0], event.values[1])) {
+                double disX = buildingLocation[i].lat - myLocation.lat;
+                double disY = buildingLocation[i].lon - myLocation.lon;
+                double offset,hAngle;
+                if(disX<0) {
+                    disX=-disX;
+                    if(disY<0) {
+                        disY=-disY;
+                        offset = Math.atan(disY/disX)*180/ Math.PI;
+                        hAngle= 270 -offset;
                     }
                     else {
-                        if(disY<0) {
-                            disY=-disY;
-                            offset = Math.atan(disY/disX)*180/ Math.PI;
-                            hAngle= 90 +offset;
-                        }
-                        else {
-                            offset = Math.atan(disY/disX)*180/ Math.PI;
-                            hAngle= 90 - offset;
-                        }
+                        offset = Math.atan(disY/disX)*180/ Math.PI;
+                        hAngle= 270 +offset;
                     }
+                }
+                else {
+                    if(disY<0) {
+                        disY=-disY;
+                        offset = Math.atan(disY/disX)*180/ Math.PI;
+                        hAngle= 90 +offset;
+                    }
+                    else {
+                        offset = Math.atan(disY/disX)*180/ Math.PI;
+                        hAngle= 90 - offset;
+                    }
+                }
+                double degree = event.values[0] - hAngle;
+                double gradient = event.values[1];
+                if (180 < degree)
+                    degree -= 360;
+                else if (degree < -180)
+                    degree += 360;
+                //Log.i("hAngle : " + ((int) event.values[0] - hAngle) + viewAngle, "기울기 : " + (int) event.values[1]);
+                //Log.i("값 : ", " " + width * ((viewAngle - (degree)) / (viewAngle * 2)));
+                //Log.i("event[0] : " + event.values[0], "hAngle : " + hAngle);
+                //Log.i("half : " + (event.values[0] - hAngle), "asdasdas");
+                Log.i(i+"","번째");
 
-                    double degree = event.values[0] - hAngle;
-
-                    if (180 < degree)
-                        degree -= 360;
-                    else if (degree < -180)
-                        degree += 360;
-
-                    //Log.i("hAngle : " + ((int) event.values[0] - hAngle) + viewAngle, "기울기 : " + (int) event.values[1]);
-                    //Log.i("값 : ", " " + width * ((viewAngle - (degree)) / (viewAngle * 2)));
-                    //Log.i("event[0] : " + event.values[0], "hAngle : " + hAngle);
-                    //Log.i("half : " + (event.values[0] - hAngle), "asdasdas");
-                    Log.i(i+"","번째");
-
-                    //TODO:임시로 지정한 그림사이즈 변경법
-                    //500x500사이즈인 그림을 멀면 멀수록 점점 작게 한다. 단, 범위를 너무 벗어나면 그림이 커진다.
-                    for(int k = 0; k <= 2; k++) {
+                if(-20 <= degree && degree <= 20 && -135 <= gradient && gradient <= -45) {
+                    Log.i("test","해당 위치에 건물 존재");
+                    for(int k = 0; k < 3; k++) {
                         img[k].setVisibility(View.VISIBLE);
-                        if(bi[k].lon - my.lon > 0) {
-                            img[k].getLayoutParams().width = 500 - (int) ((bi[k].lon - my.lon) * 500000);
-                            img[k].getLayoutParams().height = 500 - (int) ((bi[k].lon - my.lon) * 500000);
-                        }
-                        else {
-                            img[k].getLayoutParams().width = 500 - (int) (-(bi[k].lon - my.lon) * 500000);
-                            img[k].getLayoutParams().height = 500 - (int) (-(bi[k].lon - my.lon) * 500000);
-                        }
+                        double distance = calculateDistance(myLocation.lat, myLocation.lon, buildingLocation[k].lat, buildingLocation[k].lon);
+                        int imageSize = 500 - (int) distance * 10;
+                        img[k].getLayoutParams().width = imageSize;
+                        img[k].getLayoutParams().height = imageSize;
                     }
-
 
                     Log.i(i+"",(width - imgWidth[i]) / 2 + width * (-(degree) / viewAngle)+"");
                     Log.i(i+"",(height - imgHeight[i]) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height)+"");
                     img[i].setX((float) ((width - imgWidth[i]) / 2 + width * (-(degree) / viewAngle)));
                     img[i].setY((height - imgHeight[i]) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height));
+                    img[2].setY((height - imgHeight[i]) / 2 + (-((int) (-100) + 90) / (float) 90) * (height));
+                }
+
 //                img.setX(width*((viewAngle - (event.values[0] - hAngle)) /(viewAngle*2)) - imgWidth);
 //                img.setY(height*(-(90 + (int)event.values[1])/(viewAngle*2)) - imgHeight);
-
-                }
+                //}
             }
 
           /*  String str;
@@ -278,55 +262,29 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         }
     }
 
-    public boolean isBuildingVisible(BuildingInfo myPos, BuildingInfo buildingPos, float way, float grad)
-    {
-        double disX = buildingPos.lat - my.lat;
-        double disY = buildingPos.lon - my.lon;
+    public double calculateDistance(double myLatitude, double myLongitude, double buildingLatitude, double buildingLongitude) {
+        double theta, dist;
+        theta = myLongitude - buildingLongitude;
+        dist = Math.sin(deg2rad(myLatitude)) * Math.sin(deg2rad(buildingLatitude)) + Math.cos(deg2rad(myLatitude))
+                * Math.cos(deg2rad(buildingLatitude)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
 
-        double offset,hAngle;
-        if(disX<0)
-        {
-            disX=-disX;
-            if(disY<0)
-            {
-                disY=-disY;
-                offset = Math.atan(disY/disX)*180/ Math.PI;
-                hAngle= 270 -offset;
-            }
-            else
-            {
-                offset = Math.atan(disY/disX)*180/ Math.PI;
-                hAngle= 270 +offset;
-            }
-        }
-        else
-        {
-            if(disY<0)
-            {
-                disY=-disY;
-                offset = Math.atan(disY/disX)*180/ Math.PI;
-                hAngle= 90 +offset;
-            }
-            else
-            {
-                offset = Math.atan(disY/disX)*180/ Math.PI;
-                hAngle= 90 - offset;
-            }
-        }
-        double gradient = grad;
-        double degree = way - hAngle;
+        dist = dist * 60 * 1.1515;
+        dist = dist * 1.609344;    // 단위 mile 에서 km 변환.
+        dist = dist * 1000.0;      // 단위  km 에서 m 로 변환
 
-        if(180 < degree)
-            degree -= 360;
-        else if ( degree < -180)
-            degree += 360;
+        return dist;
+    }
 
-        if(-20 <= degree && degree <= 20 && -135 <= gradient && gradient <= -45) {
-            Log.i("test","해당 위치에 건물 존재");
-            return true;
-        }
-        else
-            return false;
+    // 주어진 도(degree) 값을 라디언으로 변환
+    private double deg2rad(double deg){
+        return (double)(deg * Math.PI / (double)180d);
+    }
+
+    // 주어진 라디언(radian) 값을 도(degree) 값으로 변환
+    private double rad2deg(double rad){
+        return (double)(rad * (double)180d / Math.PI);
     }
 
     @Override
@@ -336,11 +294,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        lat = location.getLatitude();
-        lon = location.getLongitude();
-        my.lat = location.getLatitude();
-        my.lon = location.getLongitude();
-        Toast.makeText(mContext.getApplicationContext(), "lon: " + lon + ",lat: " + lat, Toast.LENGTH_SHORT).show();
+        myLocation.lat = location.getLatitude();
+        myLocation.lon = location.getLongitude();
         //Log.i("****GpsDirct info", "onLocationChange----lon: " + lon + ",lat: " + lat);
     }
 
