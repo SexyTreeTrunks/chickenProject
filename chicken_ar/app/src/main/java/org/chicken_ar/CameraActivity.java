@@ -58,7 +58,7 @@ public class CameraActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "tmapData 겟또!", Toast.LENGTH_SHORT).show();
             }
             */
-            tmapClient.execute("126.964823","37.545801");
+            tmapClient.execute("126.963737","37.545390"); //대충 명신관 연구실 위치
         } catch (Exception e) {
             Log.e("****CameraActv error","tmapClient execute error");
             e.printStackTrace();

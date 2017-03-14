@@ -2,6 +2,9 @@ package org.chicken_ar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -182,6 +185,13 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         if(event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
             for (int i = 0; i < 3; i++) {
                 //if (isBuildingVisible(myLocation, buildingLocation[i], event.values[0], event.values[1])) {
+
+                if (i == 0) { // 화살표 이미지
+                    img[i].setVisibility(View.VISIBLE);
+                    img[i].setX(((width - imgWidth[i]) / 2));
+                    img[i].setY((height - imgHeight[i]) / 2 + (-(-120 + 90) / (float) 90) * (height));
+                }
+
                 double disX = buildingLocation[i].lat - myLocation.lat;
                 double disY = buildingLocation[i].lon - myLocation.lon;
                 double offset,hAngle;
@@ -214,28 +224,23 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                     degree -= 360;
                 else if (degree < -180)
                     degree += 360;
-                //Log.i("hAngle : " + ((int) event.values[0] - hAngle) + viewAngle, "기울기 : " + (int) event.values[1]);
-                //Log.i("값 : ", " " + width * ((viewAngle - (degree)) / (viewAngle * 2)));
-                //Log.i("event[0] : " + event.values[0], "hAngle : " + hAngle);
-                //Log.i("half : " + (event.values[0] - hAngle), "asdasdas");
-                Log.i(i+"","번째");
 
-                if(-20 <= degree && degree <= 20 && -135 <= gradient && gradient <= -45) {
-                    Log.i("test","해당 위치에 건물 존재");
-                    for(int k = 0; k < 3; k++) {
-                        img[k].setVisibility(View.VISIBLE);
-                        double distance = calculateDistance(myLocation.lat, myLocation.lon, buildingLocation[k].lat, buildingLocation[k].lon);
+                //화살표 이미지 회전
+                img[i].setImageBitmap(rotateImage(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.duck3), (float)degree*(-1)));
+
+                if (-20 <= degree && degree <= 20 && -135 <= gradient && gradient <= -45) {
+                    Log.i("test", "해당 위치에 건물 존재");
+                    if (i != 0) { //화살표 이미지를 제외한 이미지들만 화면에 나타나게
+                        img[i].setVisibility(View.VISIBLE);
+                        double distance = calculateDistance(myLocation.lat, myLocation.lon, buildingLocation[i].lat, buildingLocation[i].lon);
                         int imageSize = 500 - (int) distance * 10;
-                        img[k].getLayoutParams().width = imageSize;
-                        img[k].getLayoutParams().height = imageSize;
+                        img[i].getLayoutParams().width = imageSize;
+                        img[i].getLayoutParams().height = imageSize;
+
+                        img[i].setX((float) ((width - imgWidth[i]) / 2 + width * (-(degree) / viewAngle)));
+                        img[i].setY((height - imgHeight[i]) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height));
                     }
-
-                    Log.i(i+"",(width - imgWidth[i]) / 2 + width * (-(degree) / viewAngle)+"");
-                    Log.i(i+"",(height - imgHeight[i]) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height)+"");
-                    img[i].setX((float) ((width - imgWidth[i]) / 2 + width * (-(degree) / viewAngle)));
-                    img[i].setY((height - imgHeight[i]) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height));
                 }
-
 //                img.setX(width*((viewAngle - (event.values[0] - hAngle)) /(viewAngle*2)) - imgWidth);
 //                img.setY(height*(-(90 + (int)event.values[1])/(viewAngle*2)) - imgHeight);
                 //}
@@ -318,5 +323,32 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     public void getPathPoints(ArrayList<Location> pathPoints) {
         this.pathPoints = pathPoints;
     }
+    
+    public float bearingP1toP2(double P1_latitude, double P1_longitude, double P2_latitude, double P2_longitude) {
+        double Cur_Lat_radian = P1_latitude * (Math.PI / 180);
+        double Cur_Lon_radian = P1_longitude * (Math.PI / 180);
+        double Dest_Lat_radian = P2_latitude * (Math.PI / 180);
+        double Dest_Lon_radian = P2_longitude * (Math.PI / 180);
+        double radian_distance = 0;
+        radian_distance = Math.acos(Math.sin(Cur_Lat_radian) * Math.sin(Dest_Lat_radian) + Math.cos(Cur_Lat_radian) * Math.cos(Dest_Lat_radian) * Math.cos(Cur_Lon_radian - Dest_Lon_radian));
+        double radian_bearing = Math.acos((Math.sin(Dest_Lat_radian) - Math.sin(Cur_Lat_radian) * Math.cos(radian_distance)) / (Math.cos(Cur_Lat_radian) * Math.sin(radian_distance)));
+        double true_bearing = 0;
+        if (Math.sin(Dest_Lon_radian - Cur_Lon_radian) < 0) {
+            true_bearing = radian_bearing * (180 / Math.PI);
+            true_bearing = 360 - true_bearing;
+        } else {
+            true_bearing = radian_bearing * (180 / Math.PI);
+        }
+        return (float) true_bearing;
+    }
 
+    public Bitmap rotateImage(Bitmap src, float degree) {
+
+        // Matrix 객체 생성
+        Matrix matrix = new Matrix();
+        // 회전 각도 셋팅
+        matrix.postRotate(degree);
+        // 이미지와 Matrix 를 셋팅해서 Bitmap 객체 생성
+        return Bitmap.createBitmap(src, 0, 0, src.getWidth(),src.getHeight(), matrix, true);
+    }
 }
