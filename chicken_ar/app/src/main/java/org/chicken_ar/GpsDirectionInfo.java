@@ -206,23 +206,25 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                     degree += 360;
 
                 //포인트까지의 거리계산
-                double disXforArrow = pathPoints.get(count).getLatitude() - myLocation.lat;
-                double disYforArrow = pathPoints.get(count).getLongitude() - myLocation.lon;
-                double hAngleForArrow = calcHAngle(disXforArrow, disYforArrow);
-                double degreeForArrow = event.values[0] - hAngleForArrow;
-                if (180 < degreeForArrow)
-                    degreeForArrow -= 360;
-                else if (degreeForArrow < -180)
-                    degreeForArrow += 360;
+                if(pathPoints != null) {
+                    double disXforArrow = pathPoints.get(count).getLatitude() - myLocation.lat;
+                    double disYforArrow = pathPoints.get(count).getLongitude() - myLocation.lon;
+                    double hAngleForArrow = calcHAngle(disXforArrow, disYforArrow);
+                    double degreeForArrow = event.values[0] - hAngleForArrow;
+                    if (180 < degreeForArrow)
+                        degreeForArrow -= 360;
+                    else if (degreeForArrow < -180)
+                        degreeForArrow += 360;
 
-                //화살표 이미지 회전
-                img[i].setImageBitmap(rotateImage(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.duck3), (float)degreeForArrow*(-1)));
+                    //화살표 이미지 회전
+                    img[i].setImageBitmap(rotateImage(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.duck3), (float) degreeForArrow * (-1)));
 
-                double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
-                if(distanceForPoint <= 1 && count+1 < pathPoints.size())
-                    count++;
-                if(distanceForPoint <= 1 && count+1 == pathPoints.size())
-                    Toast.makeText(cameraActivity.getApplicationContext(), "목적지에 도착했습니다", Toast.LENGTH_LONG).show();
+                    double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
+                    if (distanceForPoint <= 1 && count + 1 < pathPoints.size())
+                        count++;
+                    if (distanceForPoint <= 1 && count + 1 == pathPoints.size())
+                        Toast.makeText(cameraActivity.getApplicationContext(), "목적지에 도착했습니다", Toast.LENGTH_LONG).show();
+                }
 
                 if (-20 <= degree && degree <= 20 && -135 <= gradient && gradient <= -45) {
                     Log.i("test", "해당 위치에 건물 존재");
