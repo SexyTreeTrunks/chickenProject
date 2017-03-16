@@ -67,6 +67,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     protected LocationManager locationManager;
 
+    int count = 0;
+
     public GpsDirectionInfo(Context context, CameraActivity ma) {
         this.mContext = context;
         getLocation();
@@ -194,30 +196,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
                 double disX = buildingLocation[i].lat - myLocation.lat;
                 double disY = buildingLocation[i].lon - myLocation.lon;
-                double offset,hAngle;
-                if(disX<0) {
-                    disX=-disX;
-                    if(disY<0) {
-                        disY=-disY;
-                        offset = Math.atan(disY/disX)*180/ Math.PI;
-                        hAngle= 270 -offset;
-                    }
-                    else {
-                        offset = Math.atan(disY/disX)*180/ Math.PI;
-                        hAngle= 270 +offset;
-                    }
-                }
-                else {
-                    if(disY<0) {
-                        disY=-disY;
-                        offset = Math.atan(disY/disX)*180/ Math.PI;
-                        hAngle= 90 +offset;
-                    }
-                    else {
-                        offset = Math.atan(disY/disX)*180/ Math.PI;
-                        hAngle= 90 - offset;
-                    }
-                }
+
+                double hAngle = calcHAngle(disX, disY);
                 double degree = event.values[0] - hAngle;
                 double gradient = event.values[1];
                 if (180 < degree)
@@ -225,8 +205,24 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 else if (degree < -180)
                     degree += 360;
 
+                //포인트까지의 거리계산
+                double disXforArrow = pathPoints.get(count).getLatitude() - myLocation.lat;
+                double disYforArrow = pathPoints.get(count).getLongitude() - myLocation.lon;
+                double hAngleForArrow = calcHAngle(disXforArrow, disYforArrow);
+                double degreeForArrow = event.values[0] - hAngleForArrow;
+                if (180 < degreeForArrow)
+                    degreeForArrow -= 360;
+                else if (degreeForArrow < -180)
+                    degreeForArrow += 360;
+
                 //화살표 이미지 회전
-                img[i].setImageBitmap(rotateImage(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.duck3), (float)degree*(-1)));
+                img[i].setImageBitmap(rotateImage(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.duck3), (float)degreeForArrow*(-1)));
+
+                double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
+                if(distanceForPoint <= 1 && count+1 < pathPoints.size())
+                    count++;
+                if(distanceForPoint <= 1 && count+1 == pathPoints.size())
+                    Toast.makeText(cameraActivity.getApplicationContext(), "목적지에 도착했습니다", Toast.LENGTH_LONG).show();
 
                 if (-20 <= degree && degree <= 20 && -135 <= gradient && gradient <= -45) {
                     Log.i("test", "해당 위치에 건물 존재");
@@ -266,6 +262,35 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
             m_check_view.setText(str);
             */
         }
+    }
+
+    public double calcHAngle(double disX, double disY) {
+        double offset, hAngle;
+
+        if(disX<0) {
+            disX=-disX;
+            if(disY<0) {
+                disY=-disY;
+                offset = Math.atan(disY/disX)*180/ Math.PI;
+                hAngle= 270 -offset;
+            }
+            else {
+                offset = Math.atan(disY/disX)*180/ Math.PI;
+                hAngle= 270 +offset;
+            }
+        }
+        else {
+            if(disY<0) {
+                disY=-disY;
+                offset = Math.atan(disY/disX)*180/ Math.PI;
+                hAngle= 90 +offset;
+            }
+            else {
+                offset = Math.atan(disY/disX)*180/ Math.PI;
+                hAngle= 90 - offset;
+            }
+        }
+        return hAngle;
     }
 
     public double calculateDistance(double myLatitude, double myLongitude, double buildingLatitude, double buildingLongitude) {
