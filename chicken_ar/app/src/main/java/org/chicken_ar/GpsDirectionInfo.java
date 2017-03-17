@@ -15,7 +15,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -52,7 +54,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     Sensor m_ot_sensor;
     CameraActivity cameraActivity;
 
-    ImageView[] img = new ImageView[3];
+    ImageView arrowImage;
+    TextView textView;
 
     BuildingInfo[] buildingLocation;
     BuildingInfo myLocation;
@@ -62,8 +65,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     float width;
     float height;
 
-    float[] imgWidth = new float[3];
-    float[] imgHeight = new float[3];
+    float imgWidth;
+    float imgHeight;
 
     protected LocationManager locationManager;
 
@@ -85,19 +88,19 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         width = ma.dm.widthPixels;
         height = ma.dm.heightPixels;
 
-        img[2] = (ImageView)ma.findViewById(R.id.duck2); //광개토
-        img[1] = (ImageView)ma.findViewById(R.id.duck1); //충무관
-        img[0] = (ImageView)ma.findViewById(R.id.duck3); //학생
+        arrowImage = (ImageView)ma.findViewById(R.id.duck3);
+        textView = (TextView)ma.findViewById(R.id.textView);
 
-        for(int i=0;i<3;i++) {
+        imgWidth = (float) arrowImage.getLayoutParams().width;
+        imgHeight = (float) arrowImage.getLayoutParams().height;
+
+        /*for(int i=0;i<3;i++) {
             img[i].getLayoutParams().width = 200;
             img[i].getLayoutParams().height = 200;
 
             imgWidth[i]=(float) img[i].getLayoutParams().width;
             imgHeight[i]=(float) img[i].getLayoutParams().height;
 
-
-            //Log.i("값 비교 -----> " + img.getX()+"",img.getY()+" : " + imgHeight + " : " + img.getHeight());
             final int finali = i;
 
             img[i].setOnClickListener(new View.OnClickListener() {
@@ -112,7 +115,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                     //}
                 }
             });
-        }
+        }*/
+
         // 시스템서비스로부터 SensorManager 객체를 얻는다.
         m_sensor_manager = (SensorManager)ma.getSystemService(SENSOR_SERVICE);
         // SensorManager 를 이용해서 방향 센서 객체를 얻는다.
@@ -185,25 +189,14 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
-            for (int i = 0; i < 3; i++) {
+            //for (int i = 0; i < 3; i++) {
                 //if (isBuildingVisible(myLocation, buildingLocation[i], event.values[0], event.values[1])) {
 
-                if (i == 0) { // 화살표 이미지
-                    img[i].setVisibility(View.VISIBLE);
-                    img[i].setX(((width - imgWidth[i]) / 2));
-                    img[i].setY((height - imgHeight[i]) / 2 + (-(-120 + 90) / (float) 90) * (height));
-                }
-
-                double disX = buildingLocation[i].lat - myLocation.lat;
-                double disY = buildingLocation[i].lon - myLocation.lon;
-
-                double hAngle = calcHAngle(disX, disY);
-                double degree = event.values[0] - hAngle;
-                double gradient = event.values[1];
-                if (180 < degree)
-                    degree -= 360;
-                else if (degree < -180)
-                    degree += 360;
+                // 화살표 이미지
+                    arrowImage.setVisibility(View.VISIBLE);
+                    //arrowImage.setX((width - imgWidth) / 2);
+                    arrowImage.setX(width/3 + 50);
+                    arrowImage.setY((height - imgHeight) / 2 + (-(-110 + 90) / (float) 90) * (height));
 
                 //포인트까지의 거리계산
                 if(pathPoints != null) {
@@ -215,9 +208,12 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                         degreeForArrow -= 360;
                     else if (degreeForArrow < -180)
                         degreeForArrow += 360;
+                    double distance = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
 
-                    //화살표 이미지 회전
-                    img[i].setImageBitmap(rotateImage(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.duck3), (float) degreeForArrow * (-1)));
+                    //화살표 이미지 회전. 쓰려면 activity_camera.xml에서 해당 imageview에 대한 backgraound 사항 지워야함
+                    //arrowImage.setImageBitmap(rotateImage(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.duck3), (float) degreeForArrow * (-1)));
+                    arrowImage.setRotation((float)degreeForArrow * (-1));
+                    textView.setText("다음 포인트까지 남은 거리 : " + distance);
 
                     double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
                     if (distanceForPoint <= 1 && count + 1 < pathPoints.size())
@@ -225,7 +221,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                     if (distanceForPoint <= 1 && count + 1 == pathPoints.size())
                         Toast.makeText(cameraActivity.getApplicationContext(), "목적지에 도착했습니다", Toast.LENGTH_LONG).show();
                 }
-
+                /*
                 if (-20 <= degree && degree <= 20 && -135 <= gradient && gradient <= -45) {
                     Log.i("test", "해당 위치에 건물 존재");
                     if (i != 0) { //화살표 이미지를 제외한 이미지들만 화면에 나타나게
@@ -242,7 +238,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 //                img.setX(width*((viewAngle - (event.values[0] - hAngle)) /(viewAngle*2)) - imgWidth);
 //                img.setY(height*(-(90 + (int)event.values[1])/(viewAngle*2)) - imgHeight);
                 //}
-            }
+            }*/
 
           /*  String str;
             // 첫번째 데이터인 방위값으로 문자열을 구성하여 텍스트뷰에 출력한다.
@@ -370,7 +366,6 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     }
 
     public Bitmap rotateImage(Bitmap src, float degree) {
-
         // Matrix 객체 생성
         Matrix matrix = new Matrix();
         // 회전 각도 셋팅

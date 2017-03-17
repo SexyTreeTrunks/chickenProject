@@ -12,6 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <TextView
+        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="104dp"
+        android:id="@+id/textView" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -32,6 +37,7 @@
         android:layout_height="wrap_content"
         android:scrollX="30dp"
         android:visibility="gone"
+        android:background="@drawable/duck3"
         android:id="@+id/duck3" />
 
 </FrameLayout>
