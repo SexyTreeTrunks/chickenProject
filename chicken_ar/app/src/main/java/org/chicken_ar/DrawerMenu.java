@@ -3,6 +3,7 @@ package org.chicken_ar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,9 +13,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
-public class DrawerMenu extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,LoadJSONTask.Listener, AdapterView.OnItemClickListener {
+    private List<HashMap<String, String>> DiningInfoMapList = new ArrayList<>();
+    private ListView mListView;
+    private static final String KEY_ID = "id";
+    private static final String KEY_NAME = "name";
+    private static final String KEY_LONGITUDE = "longitude";
+    private static final String KEY_LATITUDE = "latitude";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,15 +37,6 @@ public class DrawerMenu extends AppCompatActivity
         setContentView(R.layout.activity_drawer_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
-                startActivity(intent);
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -40,37 +46,41 @@ public class DrawerMenu extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mListView = (ListView) findViewById(R.id.list_view);
+        mListView.setOnItemClickListener(this);
+        new LoadJSONTask(this).execute(CategoryType.CAFE);
+
+        //맨 마지막에 지워야 함.
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
     public void onBackPressed() {
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
+        super.onBackPressed();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.drawer_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -82,21 +92,85 @@ public class DrawerMenu extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_cafe:
-
+                new LoadJSONTask(this).execute(CategoryType.CAFE);
                 break;
-            case R.id.nav_food:
-
+            case R.id.nav_dining_korea:
+                new LoadJSONTask(this).execute(CategoryType.DINING_KOREA);
                 break;
-            case R.id.nav_alchohol:
-
+            case R.id.nav_dining_snack:
+                new LoadJSONTask(this).execute(CategoryType.DINING_SNACK);
                 break;
-            case R.id.nav_favorite:
-
+            case R.id.nav_dining_japanese:
+                new LoadJSONTask(this).execute(CategoryType.DINING_JAPANESE);
+                break;
+            case R.id.nav_dining_chinese:
+                new LoadJSONTask(this).execute(CategoryType.DINING_CHINESE);
+                break;
+            case R.id.nav_dining_western:
+                new LoadJSONTask(this).execute(CategoryType.DINING_WESTERN);
                 break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        Toast.makeText(this, DiningInfoMapList.get(position).get(KEY_NAME),Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onLoaded(List<DiningInfo> diningInfoList) {
+        Log.d("****onLoaded","이거 실행됨!");
+        /*
+        for (DiningInfo DiningInfo : DiningInfoList) {
+            Log.d("****onLoaded","for문!");
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put(KEY_ID, DiningInfo.getCafe_id());
+            map.put(KEY_NAME, DiningInfo.getName());
+            map.put(KEY_LONGITUDE, DiningInfo.getLongitude());
+            map.put(KEY_LATITUDE, DiningInfo.getLatitude());
+
+            Log.d("****onLoaded","key_id"+DiningInfo.getCafe_id());
+            Log.d("****onLoaded","key_name"+DiningInfo.getName());
+            Log.d("****onLoaded","key_lon"+DiningInfo.getLongitude());
+            Log.d("****onLoaded","key_lat"+DiningInfo.getLatitude());
+            DiningInfoMapList.add(map);
+        }*/
+        for(int i = 0; i < diningInfoList.size(); i++) {
+            Log.d("****onLoaded","for문!");
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put(KEY_ID, diningInfoList.get(i).getId());
+            map.put(KEY_NAME, diningInfoList.get(i).getName());
+            map.put(KEY_LONGITUDE, diningInfoList.get(i).getLongitude());
+            map.put(KEY_LATITUDE, diningInfoList.get(i).getLatitude());
+
+            Log.d("****onLoaded","key_id"+diningInfoList.get(i).getId());
+            Log.d("****onLoaded","key_name"+diningInfoList.get(i).getName());
+            Log.d("****onLoaded","key_lon"+diningInfoList.get(i).getLongitude());
+            Log.d("****onLoaded","key_lat"+diningInfoList.get(i).getLatitude());
+            DiningInfoMapList.add(map);
+        }
+        loadListView();
+    }
+
+    private void loadListView() {
+
+        ListAdapter adapter = new SimpleAdapter(getApplicationContext(), DiningInfoMapList, R.layout.list_item,
+                new String[] {KEY_ID, KEY_NAME, KEY_LONGITUDE, KEY_LATITUDE},
+                new int[] { R.id.id,R.id.name, R.id.longitude, R.id.latitude});
+
+        mListView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onError() {
+        Toast.makeText(this, "Error !", Toast.LENGTH_SHORT).show();
     }
 }

@@ -5,20 +5,30 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_cafe"
-            android:icon="@drawable/coffee"
+            android:icon="@drawable/cafe"
             android:title="@string/cafe" />
         <item
-            android:id="@+id/nav_food"
-            android:icon="@drawable/food"
-            android:title="@string/food" />
+            android:id="@+id/nav_dining_korea"
+            android:icon="@drawable/dining_korea"
+            android:title="@string/nav_dining_korea" />
         <item
-            android:id="@+id/nav_alchohol"
-            android:icon="@drawable/alchohol"
-            android:title="@string/alchohol" />
+            android:id="@+id/nav_dining_snack"
+            android:icon="@drawable/dining_snack"
+            android:title="@string/nav_dining_snack" />
         <item
-            android:id="@+id/nav_favorite"
-            android:icon="@drawable/star"
-            android:title="@string/favorite" />
+            android:id="@+id/nav_dining_japanese"
+            android:icon="@drawable/dining_japanese"
+            android:title="@string/nav_dining_japanese" />
+
+        <item
+            android:id="@+id/nav_dining_chinese"
+            android:icon="@drawable/dining_chinese"
+            android:title="@string/nav_dining_chinese" />
+
+        <item
+            android:id="@+id/nav_dining_western"
+            android:icon="@drawable/dining_western"
+            android:title="@string/nav_dining_western" />
     </group>
 
     <item android:title="">

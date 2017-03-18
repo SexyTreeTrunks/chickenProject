@@ -41,7 +41,6 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
     private Document responseDocument;
     private String resourceURIString;
     private ArrayList<Location> pathPoints;
-    private ArrayList<TMapPOIItem> poiPoints;
 
     @Override
     protected Void doInBackground(String... params) {
@@ -86,20 +85,6 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
         URI uri = new URI(resourceURIString);
         uri = new URIBuilder(uri).addParameters(nameValuePairs).build();
 
-        return uri;
-    }
-
-    private URI setRequestPayloadURL(String categories, String centerLon, String centerLat) throws Exception {
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("categories", categories));
-        nameValuePairs.add(new BasicNameValuePair("centerLon", centerLon));
-        nameValuePairs.add(new BasicNameValuePair("centerLat", centerLat));
-        nameValuePairs.add(new BasicNameValuePair("reqCoordType", "WGS84GEO"));
-        nameValuePairs.add(new BasicNameValuePair("resCoordType", "WGS84GEO"));
-
-        resourceURIString = "https://apis.skplanetx.com/tmap/pois/search/around?version=1&format=xml&appKey="+APP_KEY;
-        URI uri = new URI(resourceURIString);
-        uri = new URIBuilder(uri).addParameters(nameValuePairs).build();
         return uri;
     }
 
