@@ -63,7 +63,7 @@ public class LoadJSONTask extends AsyncTask<Integer, Void, Response> {
                 URL = "http://d5f7bde7.ngrok.io/get_cafe_json.php";
                 break;
             case CategoryType.DINING_KOREA:
-                URL = "http://d5f7bde7.ngrok.io/get_dining_korea_json.php";
+                URL = "http://d5f7bde7.ngrok.io/get_dining_korean_json.php";
                 break;
             case CategoryType.DINING_SNACK:
                 URL = "http://d5f7bde7.ngrok.io/get_dining_snack_json.php";
@@ -72,10 +72,10 @@ public class LoadJSONTask extends AsyncTask<Integer, Void, Response> {
                 URL = "http://d5f7bde7.ngrok.io/get_dining_japanese_json.php";
                 break;
             case CategoryType.DINING_CHINESE:
-                URL = "http://d5f7bde7.ngrok.io/get_chinese_json.php";
+                URL = "http://d5f7bde7.ngrok.io/get_dining_chinese_json.php";
                 break;
             case CategoryType.DINING_WESTERN:
-                URL = "http://d5f7bde7.ngrok.io/get_western_json.php";
+                URL = "http://d5f7bde7.ngrok.io/get_dining_western_json.php";
                 break;
         }
     }

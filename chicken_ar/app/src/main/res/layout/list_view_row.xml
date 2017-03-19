@@ -12,7 +12,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.chicken_ar.example_list.MainActivity">
+    tools:context="org.chicken_ar.DrawerMenu">
 
     <TextView
         android:id="@+id/list_view_row_user_screen_name"

@@ -1,5 +1,6 @@
 package org.chicken_ar;
 
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -28,6 +29,8 @@ public class CameraActivity extends AppCompatActivity {
     private GpsDirectionInfo gpsDirectionInfo;
     private TmapClient tmapClient;
     private ArrayList<Location> pathPoints;
+    private double dest_lon;
+    private double dest_lat;
     DisplayMetrics dm;
 
     @Override
@@ -39,7 +42,9 @@ public class CameraActivity extends AppCompatActivity {
         mCameraTextureView = (TextureView) findViewById(R.id.cameraTextureView);
         mPreview = new Preview(this, mCameraTextureView);
 
-        //new GpsDirectionInfo(this.getApplicationContext(), this);
+        Intent intent = getIntent();
+        dest_lon = intent.getDoubleExtra("DEST_LON_KEY", 0);
+        dest_lat = intent.getDoubleExtra("DEST_LAT_KEY", 0);
         gpsDirectionInfo = new GpsDirectionInfo(this.getApplicationContext(), this);
         tmapClient = new TmapClient() {
             @Override
@@ -51,14 +56,14 @@ public class CameraActivity extends AppCompatActivity {
         };
 
         try {
-
             Toast.makeText(getApplicationContext(),"CameraActv info, lon: " + gpsDirectionInfo.lon + ", lat: " + gpsDirectionInfo.lat,Toast.LENGTH_SHORT).show();
             tmapClient.execute(Double.toString(gpsDirectionInfo.lon),Double.toString(gpsDirectionInfo.lat)).get();
+            //tmapClient.execute(Double.toString(gpsDirectionInfo.lon),Double.toString(gpsDirectionInfo.lat),Double.toString(dest_lon),Double.toString(dest_lat)).get();
             if(tmapClient.getStatus() == AsyncTask.Status.FINISHED) {
                 Toast.makeText(getApplicationContext(), "tmapData 겟또!", Toast.LENGTH_SHORT).show();
             }
 
-            //tmapClient.execute("126.963737","37.545390"); //대충 명신관 연구실 위치
+            //tmapClient.execute("126.963737","37.545390",Double.toString(dest_lon), Double.toString(dest_lat)); //대충 명신관 연구실 위치
         } catch (Exception e) {
             Log.e("****CameraActv error","tmapClient execute error");
             e.printStackTrace();

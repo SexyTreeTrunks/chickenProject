@@ -45,7 +45,7 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
     @Override
     protected Void doInBackground(String... params) {
         try {
-            connection = (HttpURLConnection) setRequestPayloadURL(params[0], params[1]).toURL().openConnection();
+            connection = (HttpURLConnection) setRequestPayloadURL(params[0], params[1], params[2], params[3]).toURL().openConnection();
             setConnectionRequestSetting();
             setRequestHeader(); //얘는 안써도 상관 무
             getResponseData();
@@ -70,12 +70,14 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
         connection.setRequestProperty("Accept", "application/xml");
     }
 
-    private URI setRequestPayloadURL(String startX, String startY) throws Exception {
+    private URI setRequestPayloadURL(String startX, String startY, String endX, String endY) throws Exception {
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("startX", startX));
         nameValuePairs.add(new BasicNameValuePair("startY", startY));
-        nameValuePairs.add(new BasicNameValuePair("endX", "126.969354"));
+        //nameValuePairs.add(new BasicNameValuePair("endX", endX));
+        //nameValuePairs.add(new BasicNameValuePair("endY", endY));
         nameValuePairs.add(new BasicNameValuePair("endY", "37.544257"));
+        nameValuePairs.add(new BasicNameValuePair("endX", "126.969354"));
         nameValuePairs.add(new BasicNameValuePair("startName", "start"));
         nameValuePairs.add(new BasicNameValuePair("endName", "end"));
         nameValuePairs.add(new BasicNameValuePair("reqCoordType", "WGS84GEO"));
