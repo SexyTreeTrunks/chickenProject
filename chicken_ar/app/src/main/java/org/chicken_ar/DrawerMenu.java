@@ -25,8 +25,8 @@ import java.util.List;
 
 public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,LoadJSONTask.Listener, AdapterView.OnItemClickListener {
     ArrayList<DiningInfoListViewItem> listViewItemList;
+    List<DiningInfo> diningInfoList;
     private ListView mListView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,13 +115,19 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        //Toast.makeText(this, DiningInfoMapList.get(position).get(KEY_NAME),Toast.LENGTH_LONG).show();
         Toast.makeText(this, listViewItemList.get(position).getName(), Toast.LENGTH_SHORT).show();
+
+        Intent infoActivityIntent = new Intent(getApplicationContext(), InfoActivity.class);
+        infoActivityIntent.putExtra("ID",diningInfoList.get(position).getId());
+        infoActivityIntent.putExtra("NAME",diningInfoList.get(position).getName());
+        infoActivityIntent.putExtra("LON",diningInfoList.get(position).getLongitude());
+        infoActivityIntent.putExtra("LAT",diningInfoList.get(position).getLatitude());
+        startActivity(infoActivityIntent);
     }
 
     @Override
     public void onLoaded(List<DiningInfo> diningInfoList) {
+        this.diningInfoList = diningInfoList;
         listViewItemList = new ArrayList<DiningInfoListViewItem>();
         for(int i = 0; i < diningInfoList.size(); i++) {
             DiningInfoListViewItem listViewItem = new DiningInfoListViewItem();
@@ -129,9 +135,6 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
             listViewItem.setRatingStar((float)diningInfoList.get(i).getratingStar()/2);
             listViewItem.setDistance(/*calculate distance*/0);
             listViewItemList.add(listViewItem);
-
-            Log.d("****onLoaded", "name: "+diningInfoList.get(i).getName());
-            Log.d("****onLoaded", "ratingStar: "+diningInfoList.get(i).getratingStar());
         }
         loadListView();
     }

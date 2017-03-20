@@ -1,6 +1,7 @@
 package org.chicken_ar;
 
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -47,7 +48,7 @@ public class LoadJSONTask extends AsyncTask<Integer, Void, Response> {
             Gson gson = new Gson();
 
             return gson.fromJson(stringResponse, Response.class);
-           // return parseJson(stringResponse);
+
 
         } catch (IOException e) {
             e.printStackTrace();
