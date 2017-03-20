@@ -6,7 +6,7 @@ public class DiningInfo {
     private String name;
     private String longitude;
     private String latitude;
-    private int rating_star;
+    private int ratingStars;
 
     public void setId(String id) {
         this.id = id;
@@ -38,12 +38,12 @@ public class DiningInfo {
         return latitude;
     }
 
-    public void setRating_star(int rating_star) {
-        this.rating_star = rating_star;
+    public void setratingStar(int ratingStar) {
+        this.ratingStars = ratingStar;
     }
 
-    public int getRating_star() {
-        return rating_star;
+    public int getratingStar() {
+        return ratingStars;
     }
     
 }

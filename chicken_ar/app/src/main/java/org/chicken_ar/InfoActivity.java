@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 public class InfoActivity extends AppCompatActivity {
 
+    double longitude;
+    double latitude;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 

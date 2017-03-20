@@ -24,15 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,LoadJSONTask.Listener, AdapterView.OnItemClickListener {
-    // TO DELETE!
-    private List<HashMap<String, String>> DiningInfoMapList = new ArrayList<>();
-    private static final String KEY_ID = "id";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_LONGITUDE = "longitude";
-    private static final String KEY_LATITUDE = "latitude";
-    private static final String KEY_RATING = "rating";
-    // TO DELETE!!
-    ArrayList<DiningInfoListViewItem> listViewItemList = new ArrayList<DiningInfoListViewItem>();
+    ArrayList<DiningInfoListViewItem> listViewItemList;
     private ListView mListView;
 
     @Override
@@ -124,47 +116,28 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        Toast.makeText(this, DiningInfoMapList.get(position).get(KEY_NAME),Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, DiningInfoMapList.get(position).get(KEY_NAME),Toast.LENGTH_LONG).show();
+        Toast.makeText(this, listViewItemList.get(position).getName(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onLoaded(List<DiningInfo> diningInfoList) {
-        /*
-        for(int i = 0; i < diningInfoList.size(); i++) {
-            Log.d("****onLoaded","for문!");
-            HashMap<String, String> map = new HashMap<>();
-
-            map.put(KEY_ID, diningInfoList.get(i).getId());
-            map.put(KEY_NAME, diningInfoList.get(i).getName());
-            map.put(KEY_LONGITUDE, diningInfoList.get(i).getLongitude());
-            map.put(KEY_LATITUDE, diningInfoList.get(i).getLatitude());
-            map.put(KEY_RATING, Double.toString(diningInfoList.get(i).getRating_star()/2.0));
-
-            Log.d("****onLoaded","key_id"+diningInfoList.get(i).getId());
-            Log.d("****onLoaded","key_name"+diningInfoList.get(i).getName());
-            Log.d("****onLoaded","key_lon"+diningInfoList.get(i).getLongitude());
-            Log.d("****onLoaded","key_lat"+diningInfoList.get(i).getLatitude());
-            Log.d("****onLoaded","key_rating"+diningInfoList.get(i).getRating_star()/2.0);
-            DiningInfoMapList.add(map);
-        }
-        */
+        listViewItemList = new ArrayList<DiningInfoListViewItem>();
         for(int i = 0; i < diningInfoList.size(); i++) {
             DiningInfoListViewItem listViewItem = new DiningInfoListViewItem();
             listViewItem.setName(diningInfoList.get(i).getName());
-            listViewItem.setRatingStar((float)diningInfoList.get(i).getRating_star()/2);
+            listViewItem.setRatingStar((float)diningInfoList.get(i).getratingStar()/2);
             listViewItem.setDistance(/*calculate distance*/0);
             listViewItemList.add(listViewItem);
+
+            Log.d("****onLoaded", "name: "+diningInfoList.get(i).getName());
+            Log.d("****onLoaded", "ratingStar: "+diningInfoList.get(i).getratingStar());
         }
         loadListView();
     }
 
     private void loadListView() {
-/*
-        ListAdapter adapter = new SimpleAdapter(getApplicationContext(), DiningInfoMapList, R.layout.list_item,
-                new String[] {KEY_ID, KEY_NAME, KEY_LONGITUDE, KEY_LATITUDE, KEY_RATING},
-                new int[] { R.id.id, R.id.name, R.id.longitude, R.id.latitude, R.id.ratingStar});
-        mListView.setAdapter(adapter);
-*/
+
         ListViewAdapter listViewAdapter = new ListViewAdapter(listViewItemList);
         mListView.setAdapter(listViewAdapter);
     }

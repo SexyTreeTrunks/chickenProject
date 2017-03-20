@@ -40,6 +40,7 @@ public class LoadJSONTask extends AsyncTask<Integer, Void, Response> {
     @Override
     protected Response doInBackground(Integer... category_input) {
         try {
+
             setRequestURLByType(category_input[0]);
 
             String stringResponse = loadJSON(URL);
@@ -53,6 +54,7 @@ public class LoadJSONTask extends AsyncTask<Integer, Void, Response> {
             return null;
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
+            Log.d("****LoadJSON","GSON error");
             return null;
         }
     }
@@ -80,30 +82,6 @@ public class LoadJSONTask extends AsyncTask<Integer, Void, Response> {
         }
     }
 
-    /*
-        private Response parseJson(String stringResponse) throws JSONException {
-            Response response = new Response();
-            List<CafeInfo> listInfo = new ArrayList<CafeInfo>();
-            JSONObject jsonObject = new JSONObject(stringResponse);
-            JSONArray jsonArray = new JSONArray(jsonObject.getJSONArray("result"));
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String cafe_id = jsonArray.getJSONObject(i).getString("cafe_id");
-                String name = jsonArray.getJSONObject(i).getString("name");
-                String longitude = jsonArray.getJSONObject(i).getString("longitude");
-                String latitude = jsonArray.getJSONObject(i).getString("latitude");
-
-                CafeInfo listToView = new CafeInfo();
-                listToView.setCafe_id(cafe_id);
-                listToView.setName(name);
-                listToView.setLongitude(longitude);
-                listToView.setLatitude(latitude);
-
-                listInfo.add(listToView);
-            }
-            response.setResult(listInfo);
-            return response;
-        }
-    */
     @Override
     protected void onPostExecute(Response response) {
 
