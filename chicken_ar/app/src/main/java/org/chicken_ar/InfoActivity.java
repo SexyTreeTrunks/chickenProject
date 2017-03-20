@@ -4,6 +4,7 @@ package org.chicken_ar;
  * Created by DongHyun on 2016-12-21.
  */
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class InfoActivity extends AppCompatActivity {
+    ProgressDialog loading;
     String restaurant_id;
     String restaurant_name;
     double longitude;
@@ -68,5 +70,23 @@ public class InfoActivity extends AppCompatActivity {
         name.setText("명신관앞");
 
 
+    }
+
+    public void uploadReview(String name, String userId, String ratingStars, String contents) {
+        DataUpload task = new DataUpload() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loading = ProgressDialog.show(getApplicationContext(), "Please Wait", null, true, true);
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                loading.dismiss();
+                Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
+            }
+        };
+        task.execute(name, userId, ratingStars, contents);
     }
 }
