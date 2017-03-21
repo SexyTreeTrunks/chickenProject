@@ -116,13 +116,12 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(this, listViewItemList.get(position).getName(), Toast.LENGTH_SHORT).show();
 
         Intent infoActivityIntent = new Intent(getApplicationContext(), InfoActivity.class);
-        infoActivityIntent.putExtra("ID",diningInfoList.get(position).getId());
         infoActivityIntent.putExtra("NAME",diningInfoList.get(position).getName());
-        infoActivityIntent.putExtra("LON",diningInfoList.get(position).getLongitude());
-        infoActivityIntent.putExtra("LAT",diningInfoList.get(position).getLatitude());
+        infoActivityIntent.putExtra("LON",Double.valueOf(diningInfoList.get(position).getLongitude()));
+        infoActivityIntent.putExtra("LAT",Double.valueOf(diningInfoList.get(position).getLatitude()));
+        infoActivityIntent.putExtra("RATINGSTARS",listViewItemList.get(position).getRatingStar());
         startActivity(infoActivityIntent);
     }
 

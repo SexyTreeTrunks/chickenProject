@@ -8,17 +8,32 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.method.ScrollingMovementMethod;
-import android.widget.ImageView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 public class InfoActivity extends AppCompatActivity {
+    TextView textViewRestaurantName;
+    RatingBar ratingBar;
+    RatingBar userRatingBar;
+    ViewFlipper viewFlipper;
+    Button buttonFindingPath;
+    EditText editTextReview;
+    ListView listView;
+    Button buttonUploadReview;
     ProgressDialog loading;
-    String restaurant_id;
-    String restaurant_name;
-    double longitude;
-    double latitude;
+    private String userID = "왕밤빵";
+    private String restaurant_name;
+    private double longitude;
+    private double latitude;
+    private float ratingStars;
+    private float userRatingStars;
+    private static final String DAUM_API_KEY = "0374d14587e81f06e41447a8467a1fd6";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,54 +41,61 @@ public class InfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
+        initialVariable();
+        settingVariable();
+
+        //Review 띄우는 ListView랑 viewFilpper 관련 설정(이미지 띄우기)만 하면됨!
+    }
+
+    private void initialVariable() {
         Intent intent = getIntent();
-        restaurant_id = intent.getStringExtra("ID");
-        restaurant_name = intent.getStringExtra("NAME");
-        longitude = intent.getDoubleExtra("LON",0);
-        latitude = intent.getDoubleExtra("LAT",0);
-        Toast.makeText(getApplicationContext(),restaurant_id + " " + restaurant_name + " " + Double.toString(longitude) + "," + Double.toString(latitude),Toast.LENGTH_SHORT).show();
-        // 건물 이미지
-        //int gwangImg = R.drawable.gwang1;
-        int gwangImg = R.drawable.duck1;
-        int studenthallImg = R.drawable.studenthall1;
+        restaurant_name = intent.getExtras().getString("NAME");
+        longitude = intent.getExtras().getDouble("LON");
+        latitude = intent.getExtras().getDouble("LAT");
+        ratingStars = intent.getExtras().getFloat("RATINGSTARS");
+        Toast.makeText(getApplicationContext(),Float.toString(ratingStars),Toast.LENGTH_SHORT).show();
 
-        // 건물 이름
-        String gwangName = "광개토관";
-        String studentHallName = "학생회관";
+        textViewRestaurantName = (TextView) findViewById(R.id.restaurantName);
+        ratingBar = (RatingBar) findViewById(R.id.ratingBarInfo);
+        viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
+        buttonFindingPath = (Button) findViewById(R.id.buttonFindingPath);
+        editTextReview = (EditText) findViewById(R.id.editTextReview);
+        userRatingBar = (RatingBar) findViewById(R.id.ratingBarForUser);
+        userRatingBar.setIsIndicator(false);
+        userRatingBar.setStepSize((float)0.5);
+        buttonUploadReview = (Button) findViewById(R.id.buttonUploadReview);
+        listView = (ListView) findViewById(R.id.listViewReview);
 
-        // 건물 정보
-        String gwangContents = "경영학과가 주로 사용하는 건물이며 강의실 뿐 아니라 다양한 편의시설을 갖추고 있다.\n" +
-                "5층에는 경영학과 학생들이 운영하는 카페가 있다.\n\n" +
-                "지하 3,4층 : 주차장\n" +
-                "지하 2층 : 컨벤션 센터\n" +
-                "지하 1층 : 중소회의실, 전시장, 카페, 편의점\n" +
-                "지상 1층 ~ 13층 : 강의실 및 연구실\n" +
-                "지상 14층 : 외국인 학생 기숙사\n" +
-                "지상 15층 : 식당(찬), 소극장";
-        String studentHallContents = "학생들을 위한 건물로 동아리실과 다양한 편의시설을 갖추고 있다.\n\n" +
-                "지하 2층 : 체력단련실, 샤워실, 음악 연습실, 동아리실\n" +
-                "지하 1층 : 대공연장, 소공연장, 학생식당 \n" +
-                "1층 : 편의점, 라운지, 푸드코트\n" +
-                "2층 : 의무실, 카페베네\n" +
-                "3층 : 챌린지 대원 전용 공간, 취업진로 지원 센터, JOB카페, 학생생활상담소, 클라이밍실\n" +
-                "4층 : 총 학생회실 단과대학생 회실, 동아리 연합회실, 동아리실\n" +
-                "5층 : 동아리실\n" +
-                "6층 : 동아리실, 방송국, 세종타임즈, 학보사\n";
+    }
 
-        // activity_info의 건물 이미지,이름,정보 내용을 설정
-        ImageView img = (ImageView) findViewById(R.id.buildingImg);
-        TextView name = (TextView) findViewById(R.id.buildingName);
-        TextView info = (TextView) findViewById(R.id.buildingInfo);
-        info.setMovementMethod(new ScrollingMovementMethod());
-
-
-        name.setText("명신관앞");
+    private void settingVariable() {
+        textViewRestaurantName.setText(restaurant_name);
+        ratingBar.setRating(ratingStars);
+        buttonFindingPath.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
+                intent.putExtra("DEST_LON_KEY", longitude);
+                intent.putExtra("DEST_LAT_KEY", latitude);
+                startActivity(intent);
+            }
+        });
+        buttonUploadReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String contents = editTextReview.getText().toString();
+                userRatingStars = userRatingBar.getRating();
+                uploadReview(restaurant_name,userID,Float.toString(userRatingStars),contents);
+            }
+        });
 
 
     }
 
+
+
     public void uploadReview(String name, String userId, String ratingStars, String contents) {
-        DataUpload task = new DataUpload() {
+        ReviewUpload task = new ReviewUpload() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();

@@ -1,34 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_info"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.chicken_ar.InfoActivity"
-    android:orientation="vertical">
-    <ImageView
-        android:id="@+id/buildingImg"
-        android:layout_width="match_parent"
-        android:layout_height="250dp" />
+    tools:context="org.chicken_ar.InfoActivity">
 
-    <TextView
-        android:id="@+id/buildingName"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#722116"
-        android:text=""
-        android:textSize="20dp"
-        android:gravity="left|center"
-        android:paddingLeft="20dp"/>
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/buildingInfo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FFF"
-        android:padding="20dp"
-        android:text=""
-        android:textColor="#722116"
-        android:textSize="20dp"
-        android:scrollbars="vertical"/>
-</LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+            <Space
+                android:layout_height="wrap_content"
+                android:layout_weight="0.10"
+                android:layout_width="30dp" />
+
+            <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/restaurantName"
+                android:textSize="36sp"
+                android:layout_weight="0.10" />
+
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.60" />
+
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ratingBarInfo"
+                style="?android:attr/ratingBarStyleSmall"
+                android:numStars="5"
+                android:rating="4.5"
+                android:layout_gravity="right"
+                android:gravity="right|top"
+                tools:layout_gravity="right|center" />
+        </LinearLayout>
+
+        <ViewFlipper
+            android:id="@+id/viewFlipper"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:text="@string/finding_path_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonFindingPath"
+            android:layout_gravity="right" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:ems="10"
+            android:id="@+id/editTextReview" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ratingBarForUser"
+                android:layout_weight="0.05" />
+
+            <Space
+                android:layout_width="40dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="작성"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonUploadReview"
+                android:layout_gravity="right|center"
+                android:layout_weight="0.05" />
+        </LinearLayout>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/listViewReview"/>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

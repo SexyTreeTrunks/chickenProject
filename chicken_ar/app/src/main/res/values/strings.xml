@@ -12,6 +12,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">Sign in</string>
     <string name="str_done">완료</string>
+    <string name="finding_path_button">길찾기</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>

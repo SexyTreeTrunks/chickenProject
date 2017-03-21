@@ -19,7 +19,7 @@ import java.net.URLEncoder;
  * Created by chicken on 2017-03-20.
  */
 
-public class DataUpload extends AsyncTask<String, Void, String> {
+public class ReviewUpload extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
