@@ -43,15 +43,6 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
         mListView.setOnItemClickListener(this);
         new DiningDataDownload(this).execute(CategoryType.CAFE);
 
-        //맨 마지막에 지워야 함.
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override

@@ -43,8 +43,8 @@ public class CameraActivity extends AppCompatActivity {
         mPreview = new Preview(this, mCameraTextureView);
 
         Intent intent = getIntent();
-        dest_lon = intent.getDoubleExtra("DEST_LON_KEY", 0);
-        dest_lat = intent.getDoubleExtra("DEST_LAT_KEY", 0);
+        dest_lon = intent.getExtras().getDouble("DEST_LON_KEY");
+        dest_lat = intent.getExtras().getDouble("DEST_LAT_KEY");
         gpsDirectionInfo = new GpsDirectionInfo(this.getApplicationContext(), this);
         tmapClient = new TmapClient() {
             @Override
@@ -57,8 +57,8 @@ public class CameraActivity extends AppCompatActivity {
 
         try {
             Toast.makeText(getApplicationContext(),"CameraActv info, lon: " + gpsDirectionInfo.lon + ", lat: " + gpsDirectionInfo.lat,Toast.LENGTH_SHORT).show();
-            tmapClient.execute(Double.toString(gpsDirectionInfo.lon),Double.toString(gpsDirectionInfo.lat)).get();
-            //tmapClient.execute(Double.toString(gpsDirectionInfo.lon),Double.toString(gpsDirectionInfo.lat),Double.toString(dest_lon),Double.toString(dest_lat)).get();
+            //tmapClient.execute(Double.toString(gpsDirectionInfo.lon),Double.toString(gpsDirectionInfo.lat)).get();
+            tmapClient.execute(Double.toString(gpsDirectionInfo.lon),Double.toString(gpsDirectionInfo.lat),Double.toString(dest_lon),Double.toString(dest_lat)).get();
             if(tmapClient.getStatus() == AsyncTask.Status.FINISHED) {
                 Toast.makeText(getApplicationContext(), "tmapData 겟또!", Toast.LENGTH_SHORT).show();
             }

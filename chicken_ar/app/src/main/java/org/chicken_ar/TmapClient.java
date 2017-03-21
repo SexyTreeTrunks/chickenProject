@@ -74,10 +74,10 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("startX", startX));
         nameValuePairs.add(new BasicNameValuePair("startY", startY));
-        //nameValuePairs.add(new BasicNameValuePair("endX", endX));
-        //nameValuePairs.add(new BasicNameValuePair("endY", endY));
-        nameValuePairs.add(new BasicNameValuePair("endY", "37.544257"));
-        nameValuePairs.add(new BasicNameValuePair("endX", "126.969354"));
+        nameValuePairs.add(new BasicNameValuePair("endX", endX));
+        nameValuePairs.add(new BasicNameValuePair("endY", endY));
+        //nameValuePairs.add(new BasicNameValuePair("endY", "37.544257"));
+        //nameValuePairs.add(new BasicNameValuePair("endX", "126.969354"));
         nameValuePairs.add(new BasicNameValuePair("startName", "start"));
         nameValuePairs.add(new BasicNameValuePair("endName", "end"));
         nameValuePairs.add(new BasicNameValuePair("reqCoordType", "WGS84GEO"));
