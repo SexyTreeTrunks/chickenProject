@@ -8,7 +8,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -17,7 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-public class InfoActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class InfoActivity extends AppCompatActivity implements ReviewDataDownload.Listener, AdapterView.OnItemClickListener{
     TextView textViewRestaurantName;
     RatingBar ratingBar;
     RatingBar userRatingBar;
@@ -33,6 +38,8 @@ public class InfoActivity extends AppCompatActivity {
     private double latitude;
     private float ratingStars;
     private float userRatingStars;
+    ArrayList<ReviewInfoListViewItem> listViewItemList;
+    private List<ReviewInfo> reviewInfoList;
     private static final String DAUM_API_KEY = "0374d14587e81f06e41447a8467a1fd6";
 
     @Override
@@ -44,6 +51,8 @@ public class InfoActivity extends AppCompatActivity {
         initialVariable();
         settingVariable();
 
+        new ReviewDataDownload(this).execute(restaurant_name);
+
         //Review 띄우는 ListView랑 viewFilpper 관련 설정(이미지 띄우기)만 하면됨!
     }
 
@@ -53,7 +62,6 @@ public class InfoActivity extends AppCompatActivity {
         longitude = intent.getExtras().getDouble("LON");
         latitude = intent.getExtras().getDouble("LAT");
         ratingStars = intent.getExtras().getFloat("RATINGSTARS");
-        Toast.makeText(getApplicationContext(),Float.toString(ratingStars),Toast.LENGTH_SHORT).show();
 
         textViewRestaurantName = (TextView) findViewById(R.id.restaurantName);
         ratingBar = (RatingBar) findViewById(R.id.ratingBarInfo);
@@ -95,7 +103,26 @@ public class InfoActivity extends AppCompatActivity {
 
 
     public void uploadReview(String name, String userId, String ratingStars, String contents) {
-        ReviewUpload task = new ReviewUpload() {
+        DataUpload task = new DataUpload() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                //loading = ProgressDialog.show(getApplicationContext(), "Please Wait", null, true, true);
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                //loading.dismiss();
+                Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
+            }
+        };
+        task.execute(name, userId, ratingStars, contents);
+        // new ReviewDataDownload(this).execute(restaurant_name);
+    }
+
+    public void uploadCalculatedRatingStars(String type, String restaurantName, String ratingStars) {
+        DataUpload task = new DataUpload() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -109,6 +136,40 @@ public class InfoActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
             }
         };
-        task.execute(name, userId, ratingStars, contents);
+        task.execute(type, restaurantName, ratingStars);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    @Override
+    public void onLoaded(List<ReviewInfo> reviewInfoList) {
+        Log.d("****infoActiv","onloaded 진입");
+        this.reviewInfoList = reviewInfoList;
+        listViewItemList = new ArrayList<ReviewInfoListViewItem>();
+        for(int i = 0; i < reviewInfoList.size(); i++) {
+            ReviewInfoListViewItem listViewItem = new ReviewInfoListViewItem();
+            listViewItem.setUserId(reviewInfoList.get(i).getUserId());
+            listViewItem.setRatingStars((float)reviewInfoList.get(i).getRatingStars()/2);
+            listViewItem.setContents(reviewInfoList.get(i).getContents());
+            Log.d("****reviewInfoList", "userId:" + reviewInfoList.get(i).getUserId());
+            Log.d("****reviewInfoList", "ratingStars:" + reviewInfoList.get(i).getRatingStars());
+            Log.d("****reviewInfoList", "contents:" + reviewInfoList.get(i).getContents());
+            listViewItemList.add(listViewItem);
+        }
+        loadListView();
+    }
+
+    private void loadListView() {
+        ListViewAdapter listViewAdapter = new ListViewAdapter();
+        listViewAdapter.initAdapterToReviewInfo(listViewItemList);
+        listView.setAdapter(listViewAdapter);
+    }
+
+    @Override
+    public void onError() {
+        Toast.makeText(this, "Error !", Toast.LENGTH_SHORT).show();
     }
 }

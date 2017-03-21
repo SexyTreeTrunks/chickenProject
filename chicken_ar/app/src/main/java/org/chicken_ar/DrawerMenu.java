@@ -1,10 +1,8 @@
 package org.chicken_ar;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,16 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,LoadJSONTask.Listener, AdapterView.OnItemClickListener {
+public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,DiningDataDownload.Listener, AdapterView.OnItemClickListener {
     ArrayList<DiningInfoListViewItem> listViewItemList;
     List<DiningInfo> diningInfoList;
     private ListView mListView;
@@ -46,7 +41,7 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
 
         mListView = (ListView) findViewById(R.id.list_view);
         mListView.setOnItemClickListener(this);
-        new LoadJSONTask(this).execute(CategoryType.CAFE);
+        new DiningDataDownload(this).execute(CategoryType.CAFE);
 
         //맨 마지막에 지워야 함.
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -89,22 +84,22 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
 
         switch (id) {
             case R.id.nav_cafe:
-                new LoadJSONTask(this).execute(CategoryType.CAFE);
+                new DiningDataDownload(this).execute(CategoryType.CAFE);
                 break;
             case R.id.nav_dining_korea:
-                new LoadJSONTask(this).execute(CategoryType.DINING_KOREA);
+                new DiningDataDownload(this).execute(CategoryType.DINING_KOREA);
                 break;
             case R.id.nav_dining_snack:
-                new LoadJSONTask(this).execute(CategoryType.DINING_SNACK);
+                new DiningDataDownload(this).execute(CategoryType.DINING_SNACK);
                 break;
             case R.id.nav_dining_japanese:
-                new LoadJSONTask(this).execute(CategoryType.DINING_JAPANESE);
+                new DiningDataDownload(this).execute(CategoryType.DINING_JAPANESE);
                 break;
             case R.id.nav_dining_chinese:
-                new LoadJSONTask(this).execute(CategoryType.DINING_CHINESE);
+                new DiningDataDownload(this).execute(CategoryType.DINING_CHINESE);
                 break;
             case R.id.nav_dining_western:
-                new LoadJSONTask(this).execute(CategoryType.DINING_WESTERN);
+                new DiningDataDownload(this).execute(CategoryType.DINING_WESTERN);
                 break;
         }
 
@@ -141,7 +136,8 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
 
     private void loadListView() {
 
-        ListViewAdapter listViewAdapter = new ListViewAdapter(listViewItemList);
+        ListViewAdapter listViewAdapter = new ListViewAdapter();
+        listViewAdapter.initAdapterToDiningInfo(listViewItemList);
         mListView.setAdapter(listViewAdapter);
     }
 

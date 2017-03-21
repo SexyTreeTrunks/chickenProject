@@ -3,7 +3,7 @@ package org.chicken_ar;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Response {
+public class DiningListResponse {
     private List<DiningInfo> result = new ArrayList<DiningInfo>();
 
     public List<DiningInfo> getResult() {

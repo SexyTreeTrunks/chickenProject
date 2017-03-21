@@ -1,30 +1,25 @@
 package org.chicken_ar;
 
 
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
+import java.net.URLEncoder;
 import java.util.List;
 
 
-public class LoadJSONTask extends AsyncTask<Integer, Void, Response> {
+public class DiningDataDownload extends AsyncTask<Integer, Void, DiningListResponse> {
     private String URL;
 
-    public LoadJSONTask(Listener listener) {
+    public DiningDataDownload(Listener listener) {
 
         mListener = listener;
     }
@@ -39,7 +34,7 @@ public class LoadJSONTask extends AsyncTask<Integer, Void, Response> {
     private Listener mListener;
 
     @Override
-    protected Response doInBackground(Integer... category_input) {
+    protected DiningListResponse doInBackground(Integer... category_input) {
         try {
 
             setRequestURLByType(category_input[0]);
@@ -47,7 +42,7 @@ public class LoadJSONTask extends AsyncTask<Integer, Void, Response> {
             String stringResponse = loadJSON(URL);
             Gson gson = new Gson();
 
-            return gson.fromJson(stringResponse, Response.class);
+            return gson.fromJson(stringResponse, DiningListResponse.class);
 
 
         } catch (IOException e) {
@@ -84,7 +79,7 @@ public class LoadJSONTask extends AsyncTask<Integer, Void, Response> {
     }
 
     @Override
-    protected void onPostExecute(Response response) {
+    protected void onPostExecute(DiningListResponse response) {
 
         if (response != null) {
 
@@ -108,7 +103,6 @@ public class LoadJSONTask extends AsyncTask<Integer, Void, Response> {
 
         int httpConnResult = conn.getResponseCode();
         if(httpConnResult == HttpURLConnection.HTTP_OK) {
-
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
 
             String line;
