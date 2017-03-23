@@ -13,10 +13,12 @@
         android:layout_height="match_parent" />
 
     <TextView
-        android:text="TextView"
+        android:text="경로를 불러오고 있습니다"
         android:layout_width="match_parent"
-        android:layout_height="104dp"
-        android:id="@+id/textView" />
+        android:layout_height="68dp"
+        android:id="@+id/textView"
+        android:background="@color/bright_foreground_material_dark"
+        android:gravity="center_vertical|center_horizontal" />
 
     <ImageView
         android:layout_width="wrap_content"
