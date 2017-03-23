@@ -9,7 +9,14 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -20,7 +27,7 @@
             <Space
                 android:layout_height="wrap_content"
                 android:layout_weight="0.10"
-                android:layout_width="30dp" />
+                android:layout_width="10dp" />
 
             <TextView
                 android:text="TextView"
@@ -28,7 +35,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/restaurantName"
                 android:textSize="36sp"
-                android:layout_weight="0.10" />
+                android:layout_weight="0.10"
+                android:textAlignment="textStart" />
 
 
             <Space
@@ -36,61 +44,72 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.60" />
 
-            <RatingBar
+            <Button
+                android:text="@string/finding_path_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/ratingBarInfo"
-                style="?android:attr/ratingBarStyleSmall"
-                android:numStars="5"
-                android:rating="4.5"
+                android:id="@+id/buttonFindingPath"
                 android:layout_gravity="right"
-                android:gravity="right|top"
-                tools:layout_gravity="right|center" />
+                android:layout_weight="0.10" />
+
         </LinearLayout>
+
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ratingBarInfo"
+            style="?android:attr/ratingBarStyleSmall"
+            android:numStars="5"
+            android:rating="4.5"
+            android:layout_gravity="right"
+            android:gravity="right|top"
+            tools:layout_gravity="right|center"
+            android:layout_marginRight="25dp" />
 
         <ViewFlipper
             android:id="@+id/viewFlipper"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="145dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
-        <Button
-            android:text="@string/finding_path_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/buttonFindingPath"
-            android:layout_gravity="right" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:ems="10"
-            android:id="@+id/editTextReview" />
-
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/border">
 
-            <RatingBar
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RatingBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ratingBarForUser"
+                    android:layout_weight="0.05" />
+
+                <Space
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:text="작성"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/buttonUploadReview"
+                    android:layout_gravity="right|center"
+                    android:layout_weight="0.05" />
+            </LinearLayout>
+
+            <EditText
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/ratingBarForUser"
-                android:layout_weight="0.05" />
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/editTextReview"/>
 
-            <Space
-                android:layout_width="40dp"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:text="작성"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/buttonUploadReview"
-                android:layout_gravity="right|center"
-                android:layout_weight="0.05" />
         </LinearLayout>
 
         <ListView
