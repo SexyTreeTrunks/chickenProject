@@ -1,7 +1,16 @@
 package org.chicken_ar;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -19,10 +28,19 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,DiningDataDownload.Listener, AdapterView.OnItemClickListener {
+public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DiningDataDownload.Listener, AdapterView.OnItemClickListener, LocationListener {
     ArrayList<DiningInfoListViewItem> listViewItemList;
     List<DiningInfo> diningInfoList;
     private ListView mListView;
+
+    LocationManager locationManager;
+    boolean isGPSEnabled = false;
+    Location location;
+    double lat;
+    double lon;
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +53,9 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        getLocation();
+        checkNetwork();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -158,8 +179,97 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
         mListView.setAdapter(listViewAdapter);
     }
 
+    public void checkNetwork() {
+        ConnectivityManager manager = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mobile = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        NetworkInfo wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        if(wifi.isConnected() || mobile.isConnected())
+            ;
+        else
+            alertIfNetworkOff();
+    }
+
     @Override
     public void onError() {
         Toast.makeText(this, "Error !", Toast.LENGTH_SHORT).show();
+    }
+
+    public Location getLocation() {
+        try {
+            locationManager = (LocationManager) getApplicationContext()
+                    .getSystemService(LOCATION_SERVICE);
+
+            isGPSEnabled = locationManager
+                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+            if(!isGPSEnabled)
+                alertIfGpsOff();
+            else
+                if (location == null) {
+                    locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            MIN_TIME_BW_UPDATES,
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                    if (locationManager != null) {
+                        location = locationManager
+                                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        if (location != null) {
+                            lat = location.getLatitude();
+                            lon = location.getLongitude();
+                        }
+                    }
+                }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return location;
+}
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+        alertIfGpsOff();
+    }
+
+    public void alertIfGpsOff() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("GPS가 꺼져있습니다.\n" +
+                "'위치서비스'에서 'Google 위치 서비스'를 체크해주세요").setPositiveButton("설정", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        });
+        dialog.setNegativeButton("취소", null).show();
+    }
+
+    public void alertIfNetworkOff() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("인터넷이 꺼져있습니다.\n" +
+                "Wifi나 LTE를 켜주세요.").setPositiveButton("설정", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                startActivity(intent);
+            }
+        });
+        dialog.setNegativeButton("취소", null).show();
     }
 }
