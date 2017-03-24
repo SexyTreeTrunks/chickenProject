@@ -51,8 +51,8 @@ public class InfoActivity extends AppCompatActivity implements ReviewDataDownloa
         setContentView(R.layout.activity_info);
 
         initialVariable();
-        settingVariable();
-
+        settingButtonVariable();
+        settingViewFlipper();
         new ReviewDataDownload(this).execute(restaurant_name);
 
         //Review 띄우는 ListView랑 viewFilpper 관련 설정(이미지 띄우기)만 하면됨!
@@ -77,7 +77,7 @@ public class InfoActivity extends AppCompatActivity implements ReviewDataDownloa
 
     }
 
-    private void settingVariable() {
+    private void settingButtonVariable() {
         Button buttonFindingPath = (Button) findViewById(R.id.buttonFindingPath);
         buttonFindingPath.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,14 +97,32 @@ public class InfoActivity extends AppCompatActivity implements ReviewDataDownloa
                 uploadReview(restaurant_name, userID, Integer.toString((int) userRatingStars * 2), contents);
             }
         });
+
+    }
+
+    private void settingViewFlipper() {
         ViewFlipper viewFlipper;
         viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
         ImageView imageView1 = (ImageView) findViewById(R.id.imageForViewFlipper1);
         ImageView imageView2 = (ImageView) findViewById(R.id.imageForViewFlipper2);
         ImageView imageView3 = (ImageView) findViewById(R.id.imageForViewFlipper3);
-        String url1 = "http://cythumb.cyworld.com/810x0/c2down.cyworld.co.kr/download?fid=64224cb80c31fe5f423f4cef69cd5fb2&name=20150423_122209.jpg";
-        String url2 = "http://cfile4.uf.tistory.com/image/256EB54453970EE22B5174";
-        String url3 = "http://cfile2.uf.tistory.com/image/22053C40585FD94E1AD1A6";
+        String url1;
+        String url2;
+        String url3;
+        if(restaurant_name.equals("설쌈냉면")) {
+            url1 = "http://cythumb.cyworld.com/810x0/c2down.cyworld.co.kr/download?fid=64224cb80c31fe5f423f4cef69cd5fb2&name=20150423_122209.jpg";
+            url2 = "http://cfile4.uf.tistory.com/image/256EB54453970EE22B5174";
+            url3 = "http://cfile2.uf.tistory.com/image/22053C40585FD94E1AD1A6";
+        }else if(restaurant_name.equals("버거인")) {
+            url1 = "http://mblogthumb4.phinf.naver.net/20150316_207/ns00023_1426489406146OvdyN_JPEG/P20150316_134348645_9B0CFE98-6EEC-4D12-A17A-7B8B7488D4ED.JPG?type=w2";
+            url2 = "https://img.siksinhot.com/place/1486677048715305.jpg";
+            url3 = "http://mblogthumb3.phinf.naver.net/20160213_226/gahee1266_1455373840926IedVV_JPEG/P20160213_134626284_567AFAA9-F1D3-4516-9BB9-EF85781A574D.JPG?type=w420";
+        }else {
+            url1 = "http://img1.itpic.co.kr/download?redirect=/U001001/moa/2016/06/28/44/moa_8031467086861884_811_1_467345.jpg";
+            url2 = "http://mblogthumb1.phinf.naver.net/20130731_280/mijung700_1375207536711JGFwb_JPEG/02.jpg?type=w2";
+            url3 = "https://mobiletax.kr/static/images/landing/juicy.jpg";
+        }
+
         imageFromURL(url1, imageView1);
         imageFromURL(url2, imageView2);
         imageFromURL(url3, imageView3);
@@ -191,4 +209,5 @@ public class InfoActivity extends AppCompatActivity implements ReviewDataDownloa
         }
 
     }
+
 }

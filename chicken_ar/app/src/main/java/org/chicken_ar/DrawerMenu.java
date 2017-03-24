@@ -119,10 +119,36 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
             DiningInfoListViewItem listViewItem = new DiningInfoListViewItem();
             listViewItem.setName(diningInfoList.get(i).getName());
             listViewItem.setRatingStar((float)diningInfoList.get(i).getratingStar()/2);
-            listViewItem.setDistance(/*calculate distance*/0);
+            double calculatedDistance = calculateDistance(0,0,Double.valueOf(diningInfoList.get(i).getLatitude()),Double.valueOf(diningInfoList.get(i).getLongitude()));
+            listViewItem.setDistance((float)calculatedDistance);
             listViewItemList.add(listViewItem);
         }
         loadListView();
+    }
+
+
+    private double calculateDistance(double myLatitude, double myLongitude, double buildingLatitude, double buildingLongitude) {
+        double theta, dist;
+        theta = myLongitude - buildingLongitude;
+        dist = Math.sin(deg2rad(myLatitude)) * Math.sin(deg2rad(buildingLatitude)) + Math.cos(deg2rad(myLatitude))
+                * Math.cos(deg2rad(buildingLatitude)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+
+        dist = dist * 60 * 1.1515;
+        dist = dist * 1.609344;    // 단위 mile 에서 km 변환.
+        dist = dist * 1000.0;      // 단위  km 에서 m 로 변환
+
+        return dist;
+    }
+
+    private double deg2rad(double deg){
+        return (deg * Math.PI / 180d);
+    }
+
+    // 주어진 라디언(radian) 값을 도(degree) 값으로 변환
+    private double rad2deg(double rad){
+        return (rad * 180d / Math.PI);
     }
 
     private void loadListView() {
