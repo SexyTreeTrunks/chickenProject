@@ -56,14 +56,12 @@ public class CameraActivity extends AppCompatActivity {
         };
 
         try {
-            Toast.makeText(getApplicationContext(),"CameraActv info, lon: " + gpsDirectionInfo.lon + ", lat: " + gpsDirectionInfo.lat,Toast.LENGTH_SHORT).show();
-            //tmapClient.execute(Double.toString(gpsDirectionInfo.lon),Double.toString(gpsDirectionInfo.lat)).get();
             tmapClient.execute(Double.toString(gpsDirectionInfo.lon),Double.toString(gpsDirectionInfo.lat),Double.toString(dest_lon),Double.toString(dest_lat)).get();
             if(tmapClient.getStatus() == AsyncTask.Status.FINISHED) {
                 Toast.makeText(getApplicationContext(), "tmapData 겟또!", Toast.LENGTH_SHORT).show();
             }
 
-            //tmapClient.execute("126.963737","37.545390",Double.toString(dest_lon), Double.toString(dest_lat)); //대충 명신관 연구실 위치
+            tmapClient.execute("126.963737","37.545390",Double.toString(dest_lon), Double.toString(dest_lat)); //대충 명신관 연구실 위치
         } catch (Exception e) {
             Log.e("****CameraActv error","tmapClient execute error");
             e.printStackTrace();

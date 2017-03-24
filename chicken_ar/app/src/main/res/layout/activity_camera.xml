@@ -25,8 +25,8 @@
         android:layout_height="wrap_content"
         android:scrollX="30dp"
         android:visibility="gone"
-        android:background="@drawable/duck1"
-        android:id="@+id/duck1" />
+        android:background="@drawable/destination_pin"
+        android:id="@+id/destination_pin" />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

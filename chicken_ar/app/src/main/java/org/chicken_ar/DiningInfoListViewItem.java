@@ -7,7 +7,7 @@ package org.chicken_ar;
 public class DiningInfoListViewItem {
     private String name;
     private float ratingStar;
-    private float distance;
+    private int distance;
 
     public void setName(String name) {
         this.name = name;
@@ -17,7 +17,7 @@ public class DiningInfoListViewItem {
         this.ratingStar = ratingStar;
     }
 
-    public void setDistance(float distance) {
+    public void setDistance(int distance) {
         this.distance = distance;
     }
 
@@ -25,7 +25,7 @@ public class DiningInfoListViewItem {
         return name;
     }
 
-    public float getDistance() {
+    public int getDistance() {
         return distance;
     }
 

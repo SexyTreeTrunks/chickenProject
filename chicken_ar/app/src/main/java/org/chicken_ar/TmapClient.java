@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.Provider;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -41,6 +42,7 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
     private Document responseDocument;
     private String resourceURIString;
     private ArrayList<Location> pathPoints;
+    private HashMap<Integer,String> pathDescriptions;
 
     @Override
     protected Void doInBackground(String... params) {
@@ -128,6 +130,8 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
     public ArrayList<Location> getPathPoints() {
         Element root = responseDocument.getDocumentElement();
         pathPoints = new ArrayList<Location>();
+        pathDescriptions = new HashMap<Integer, String>();
+        int hashmapKeyCount = 0;
         try {
             NodeList nodeList = root.getElementsByTagName("Placemark");
             for (int i = 0; i < nodeList.getLength(); i++) {
@@ -140,9 +144,13 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
                 } else {
                     coordinates = element.getElementsByTagName("Point").item(0).getTextContent();
                 }
-
+                //TODO: Description정보 저장/활용하기
+                /*
+                String description = element.getElementsByTagName("description").item(0).getTextContent();
+                pathDescriptions.put(hashmapKeyCount,description);
+                */
                 StringTokenizer splitedLocationTokens = new StringTokenizer(coordinates," ");
-                for (int j = 0; splitedLocationTokens.hasMoreElements(); j++) {
+                for (int j = 0; splitedLocationTokens.hasMoreElements(); j++,hashmapKeyCount++) {
                     StringTokenizer locationTokens = new StringTokenizer(splitedLocationTokens.nextToken(),",");
                     Location location = new Location("provider");
                     for (int k = 0; locationTokens.hasMoreElements(); k++) {
@@ -151,6 +159,7 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
                         pathPoints.add(location);
                     }
                 }
+
             }
         } catch (Exception ex) {
             Log.e("****TmapClient error","getPathPoints error");

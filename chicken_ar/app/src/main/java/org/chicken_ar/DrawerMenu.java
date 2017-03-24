@@ -11,7 +11,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -140,15 +139,17 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
             DiningInfoListViewItem listViewItem = new DiningInfoListViewItem();
             listViewItem.setName(diningInfoList.get(i).getName());
             listViewItem.setRatingStar((float)diningInfoList.get(i).getratingStar()/2);
-            double calculatedDistance = calculateDistance(0,0,Double.valueOf(diningInfoList.get(i).getLatitude()),Double.valueOf(diningInfoList.get(i).getLongitude()));
-            listViewItem.setDistance((float)calculatedDistance);
+            //Location myLocation = getLocation();
+            int calculatedDistance = calculateDistance(0,0/*myLocation.getLatitude(),myLocation.getLongitude()*/,
+                    Double.valueOf(diningInfoList.get(i).getLatitude()),Double.valueOf(diningInfoList.get(i).getLongitude()));
+            listViewItem.setDistance(calculatedDistance);
             listViewItemList.add(listViewItem);
         }
         loadListView();
     }
 
 
-    private double calculateDistance(double myLatitude, double myLongitude, double buildingLatitude, double buildingLongitude) {
+    private int calculateDistance(double myLatitude, double myLongitude, double buildingLatitude, double buildingLongitude) {
         double theta, dist;
         theta = myLongitude - buildingLongitude;
         dist = Math.sin(deg2rad(myLatitude)) * Math.sin(deg2rad(buildingLatitude)) + Math.cos(deg2rad(myLatitude))
@@ -160,7 +161,7 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
         dist = dist * 1.609344;    // 단위 mile 에서 km 변환.
         dist = dist * 1000.0;      // 단위  km 에서 m 로 변환
 
-        return dist;
+        return (int)dist;
     }
 
     private double deg2rad(double deg){
@@ -225,7 +226,7 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
             e.printStackTrace();
         }
         return location;
-}
+    }
 
     @Override
     public void onLocationChanged(Location location) {
