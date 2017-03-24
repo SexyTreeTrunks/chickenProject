@@ -70,6 +70,8 @@ public class DataUpload extends AsyncTask<String, Void, String> {
                     Log.d("****DataUpload","line - " + line);
                     break;
                 }
+                wr.close();
+                reader.close();
                 return sb.toString();
             } else {
                 Log.i("****DataUpload", "user가 계산한 ratingStars upload");

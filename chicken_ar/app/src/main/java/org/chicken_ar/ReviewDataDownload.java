@@ -90,7 +90,7 @@ public class ReviewDataDownload extends AsyncTask<String, Void, ReviewListRespon
             response.append(line);
             Log.i("****loadJSON", "http_ok: " + line);
         }
-
+        wr.close();
         in.close();
 
         return response.toString();

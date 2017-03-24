@@ -34,6 +34,7 @@ public class InfoActivity extends AppCompatActivity implements ReviewDataDownloa
     ListView listView;
     Bitmap bitmap;
     ProgressDialog loading;
+    ReviewDataDownload reviewDataDownload;
     private String userID = "chicken2";
     private String restaurant_name;
     private double longitude;
@@ -119,6 +120,9 @@ public class InfoActivity extends AppCompatActivity implements ReviewDataDownloa
         DataUpload task = new DataUpload();
         task.execute(name, userId, ratingStars, contents);
         // new ReviewDataDownload(this).execute(restaurant_name);
+        editTextReview.setText("");
+        userRatingBar.setRating(0);
+        new ReviewDataDownload(this).execute(restaurant_name);
     }
 
     public void uploadCalculatedRatingStars(String type, String restaurantName, String ratingStars) {
