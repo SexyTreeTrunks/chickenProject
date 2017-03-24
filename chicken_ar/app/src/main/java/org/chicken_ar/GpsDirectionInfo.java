@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -195,8 +196,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
             // 화살표 이미지
             arrowImage.setVisibility(View.VISIBLE);
             //arrowImage.setX((width - imgWidth) / 2);
-            arrowImage.setX(width/3 + 50);
-            arrowImage.setY((height - imgHeight) / 2 + (-(-110 + 90) / (float) 90) * (height));
+            arrowImage.setX(width/6 - 60);
+            arrowImage.setY((height - imgHeight)/2 + (-(-90 + 90) / (float) 90) * (height));
 
             //포인트까지의 거리계산
             if(pathPoints != null) {
