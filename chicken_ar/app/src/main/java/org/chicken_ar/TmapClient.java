@@ -145,10 +145,10 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
                     coordinates = element.getElementsByTagName("Point").item(0).getTextContent();
                 }
                 //TODO: Description정보 저장/활용하기
-                /*
+
                 String description = element.getElementsByTagName("description").item(0).getTextContent();
                 pathDescriptions.put(hashmapKeyCount,description);
-                */
+
                 StringTokenizer splitedLocationTokens = new StringTokenizer(coordinates," ");
                 for (int j = 0; splitedLocationTokens.hasMoreElements(); j++,hashmapKeyCount++) {
                     StringTokenizer locationTokens = new StringTokenizer(splitedLocationTokens.nextToken(),",");
@@ -167,4 +167,7 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
         return pathPoints;
     }
 
+    public HashMap<Integer, String> getPathDescriptions() {
+        return pathDescriptions;
+    }
 }

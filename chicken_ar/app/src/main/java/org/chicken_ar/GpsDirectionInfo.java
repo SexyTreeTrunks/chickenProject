@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
@@ -30,6 +31,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     private final Context mContext;
     private ArrayList<Location> pathPoints;
+    private HashMap<Integer,String> pathDescriptions;
     // 현재 GPS 사용유무
     boolean isGPSEnabled = false;
 
@@ -218,16 +220,18 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 if(-30 <= degreeForArrow && degreeForArrow <= 30) {
                     arrowImage.setRotation(0);//don't rotate!
                 } else if(degreeForArrow>=-120 &&degreeForArrow<-30) {
-                    arrowImage.setRotation(-90);
-                } else if(degreeForArrow<=120 && degreeForArrow>30) {
                     arrowImage.setRotation(90);
+                } else if(degreeForArrow<=120 && degreeForArrow>30) {
+                    arrowImage.setRotation(-90);
                 } else {
                     arrowImage.setRotation(180);
                 }
                 //arrowImage.setRotation((float)degreeForArrow * (-1));
-                if(distance < 500)
-                    textView.setText("다음 포인트까지 남은 거리 : " + (int)distance + "m");
-
+                //if(distance < 500)
+                //    textView.setText("다음 포인트까지 남은 거리 : " + (int)distance + "m");
+                if(pathDescriptions.containsKey(count))
+                    textView.setText(pathDescriptions.get(count));
+                    
                 double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
                 if (distanceForPoint <= 1 && count + 1 < pathPoints.size())
                     count++;
@@ -351,8 +355,12 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     }
 
-    public void getPathPoints(ArrayList<Location> pathPoints) {
+    public void setPathPoints(ArrayList<Location> pathPoints) {
         this.pathPoints = pathPoints;
+    }
+
+    public void setPathDescriptions(HashMap<Integer, String> hashmap) {
+        this.pathDescriptions = hashmap;
     }
 
 }

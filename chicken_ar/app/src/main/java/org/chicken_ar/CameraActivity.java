@@ -50,7 +50,8 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                gpsDirectionInfo.getPathPoints(getPathPoints());
+                gpsDirectionInfo.setPathPoints(getPathPoints());
+                gpsDirectionInfo.setPathDescriptions(getPathDescriptions());
                 Log.i("****CameraAtiv","onPostExecute");
             }
         };
