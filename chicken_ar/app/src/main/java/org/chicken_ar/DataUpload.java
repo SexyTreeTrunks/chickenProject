@@ -22,6 +22,18 @@ import java.net.URLEncoder;
 public class DataUpload extends AsyncTask<String, Void, String> {
 
     @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        //loading = ProgressDialog.show(getApplicationContext(), "Please Wait", null, true, true);
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+        //loading.dismiss();
+    }
+
+    @Override
     protected String doInBackground(String... params) {
 
         try {
@@ -40,7 +52,7 @@ public class DataUpload extends AsyncTask<String, Void, String> {
                 URL url = new URL(link);
                 URLConnection conn = url.openConnection();
                 conn.setDoOutput(true);
-                Log.i("****doInBackground", "url 커낵쎤");
+                Log.i("****doInBackground", name+","+userId+","+ratingStars+","+contents);
 
                 OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
