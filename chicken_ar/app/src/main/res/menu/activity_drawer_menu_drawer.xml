@@ -13,7 +13,7 @@
             android:title="@string/nav_dining_korea" />
         <item
             android:id="@+id/nav_dining_snack"
-            android:icon="@drawable/dining_snack"
+            android:icon="@drawable/dining_snack2"
             android:title="@string/nav_dining_snack" />
         <item
             android:id="@+id/nav_dining_japanese"
