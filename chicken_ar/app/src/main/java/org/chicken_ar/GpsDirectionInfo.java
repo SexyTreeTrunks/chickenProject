@@ -204,25 +204,37 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
             //for (int i = 0; i < 3; i++) {
                 //if (isBuildingVisible(myLocation, buildingLocation[i], event.values[0], event.values[1])) {
 
-            // 화살표 이미지
-            arrowImage.setVisibility(View.VISIBLE);
-            //arrowImage.setX((width - imgWidth) / 2);
-            arrowImage.setX(width/6 - 60);
-            arrowImage.setY((height - imgHeight)/2 + (-(-90 + 90) / (float) 90) * (height));
-
             //포인트까지의 거리계산
             if(pathPoints != null) {
-                double bearing = bearingP1toP2(myLocation.lat,myLocation.lon,pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
+                // 화살표 이미지
+                arrowImage.setVisibility(View.VISIBLE);
+                //arrowImage.setX((width - imgWidth) / 2);
+                arrowImage.setX(width/6 - 60);
+                arrowImage.setY((height - imgHeight)/2 + (-(-90 + 90) / (float) 90) * (height));
+
+                //double bearing = bearingP1toP2(myLocation.lat,myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
+                double bearing = bearingP1toP2(myLocation.lat,myLocation.lon, 37.545892, 126.964676);
+                writeLog(myLocation.lat+","+myLocation.lon);
                 double degreeForArrow = event.values[0] - bearing;
                 //double degreeForArrow2 = getDegreeForArrow(count+1);
                 //double degreeForArrow3 = getDegreeForArrow(count+2);
-                double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
-                textView.setText("myLoc: " + myLocation.lat + "," + myLocation.lon
-                        +"destLoc" + pathPoints.get(count).getLatitude() +"," + pathPoints.get(count).getLongitude()
-                        +"\ndegree: "+degreeForArrow+"\ndistance: "+distanceForPoint);
+                //double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());//37.545892, 126.964676
+                double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, 37.545892, 126.964676);//
                 //화살표 이미지 회전. 쓰려면 activity_camera.xml에서 해당 imageview에 대한 backgraound 사항 지워야함
                 //arrowImage.setImageBitmap(rotateImage(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.duck3), (float) degreeForArrow * (-1)));
-                /*
+
+                if(degreeForArrow>0) {
+                    while (degreeForArrow > 180)
+                        degreeForArrow -= 360;
+                } else {
+                    while (degreeForArrow < -180)
+                        degreeForArrow += 360;
+                }
+
+                textView.setText("myLoc: " + myLocation.lat + "," + myLocation.lon
+                        +"\ndestLoc" + pathPoints.get(count).getLatitude() +"," + pathPoints.get(count).getLongitude()
+                        +"\ndegree: "+degreeForArrow+"\ndistance: "+distanceForPoint);
+
                 if(-30 <= degreeForArrow && degreeForArrow <= 30) {
                     arrowImage.setRotation(0);//don't rotate!
                 } else if(degreeForArrow>=-120 &&degreeForArrow<-30) {
@@ -232,8 +244,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 } else {
                     arrowImage.setRotation(180);
                 }
-                */
-                arrowImage.setRotation((float)degreeForArrow * (-1));
+
+                //arrowImage.setRotation((float)degreeForArrow * (-1));
                 //if(distanceForPoint < 500)
                  //   textView.setText("다음 포인트까지 남은 거리 : " + (int)distanceForPoint + "m");
                 //if(pathDescriptions.containsKey(count))
@@ -268,7 +280,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
         }
     }
-
+/*
     private double getDegreeForArrow(int count_num, float event_value) {
         //double disXforArrow = pathPoints.get(count_num).getLatitude() - myLocation.lat;
         double disXforArrow = 37.545954 - myLocation.lat;
@@ -283,7 +295,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
             degreeForArrow += 360;
         return degreeForArrow;
     }
-
+*/
 
     public double calcHAngle(double disX, double disY) {
         double offset, hAngle;
@@ -397,6 +409,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
             e.printStackTrace();
         }
     }
+
     public double bearingP1toP2(double P1_latitude, double P1_longitude,   double P2_latitude, double
             P2_longitude) {
         // 현재 위치 : 위도나 경도는 지구 중심을 기반으로 하는 각도이기 때문에

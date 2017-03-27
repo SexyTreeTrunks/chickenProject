@@ -27,6 +27,7 @@ import java.net.URI;
 import java.security.Provider;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -57,6 +58,7 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
             setRequestHeader(); //얘는 안써도 상관 무
             getResponseData();
             connection.disconnect();
+            writeLog("----------------------start-----------------------");
         }catch (Exception ex) {
             Log.e("*****TmapClient error","",ex);
         }
@@ -139,26 +141,29 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
         int hashmapKeyCount = 0;
         try {
             NodeList nodeList = root.getElementsByTagName("Placemark");
-            for (int i = 0; i < nodeList.getLength(); i++) {
+            for (int i = 1; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
                 Element element = (Element) node;
                 String nodeType = element.getElementsByTagName("tmap:nodeType").item(0).getTextContent();
-                String coordinates;
+                String coordinates = null;
                 if (nodeType.contains("LINE")) {
                     coordinates = element.getElementsByTagName("LineString").item(0).getTextContent();
+                    Log.i("****TmapClient","coordinate: " + coordinates);
                 } else {
                     coordinates = element.getElementsByTagName("Point").item(0).getTextContent();
+                    Log.i("****TmapClient","coordinate: " + coordinates);
                 }
                 //TODO: Description정보 저장/활용하기
 
                 String description = element.getElementsByTagName("description").item(0).getTextContent();
                 //writeLog("coordinates: " + coordinates+", Description: " + description);
 
-                pathDescriptions.put(hashmapKeyCount,description);
+                pathDescriptions.put(hashmapKeyCount, description);
 
-                StringTokenizer splitedLocationTokens = new StringTokenizer(coordinates," ");
-                for (int j = 0; splitedLocationTokens.hasMoreElements(); j++,hashmapKeyCount++) {
-                    StringTokenizer locationTokens = new StringTokenizer(splitedLocationTokens.nextToken(),",");
+                StringTokenizer splitedLocationTokens = new StringTokenizer(coordinates, " ");
+                splitedLocationTokens.nextToken();
+                for (int j = 0; splitedLocationTokens.hasMoreElements(); j++, hashmapKeyCount++) {
+                    StringTokenizer locationTokens = new StringTokenizer(splitedLocationTokens.nextToken(), ",");
                     Location location = new Location("provider");
                     for (int k = 0; locationTokens.hasMoreElements(); k++) {
                         location.setLongitude(Double.valueOf(locationTokens.nextToken()));
@@ -166,6 +171,18 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
                         pathPoints.add(location);
                     }
                 }
+                /*
+                StringTokenizer splitedLocationTokens = new StringTokenizer(coordinates, " ");
+                for (int j = 0; splitedLocationTokens.hasMoreElements(); j++, hashmapKeyCount++) {
+                    StringTokenizer locationTokens = new StringTokenizer(splitedLocationTokens.nextToken(), ",");
+                    Location location = new Location("provider");
+                    for (int k = 0; locationTokens.hasMoreElements(); k++) {
+                        location.setLongitude(Double.valueOf(locationTokens.nextToken()));
+                        location.setLatitude(Double.valueOf(locationTokens.nextToken()));
+                        pathPoints.add(location);
+                    }
+                }
+                */
 
             }
         } catch (Exception ex) {
