@@ -57,6 +57,7 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
         checkNetwork();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
 
         mListView = (ListView) findViewById(R.id.list_view);
