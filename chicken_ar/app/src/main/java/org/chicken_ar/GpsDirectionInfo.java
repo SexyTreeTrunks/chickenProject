@@ -36,6 +36,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     private final Context mContext;
     private ArrayList<Location> pathPoints;
+    private ArrayList<Location> pointList;
     private HashMap<Integer,String> pathDescriptions;
     // 현재 GPS 사용유무
     boolean isGPSEnabled = false;
@@ -78,6 +79,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     protected LocationManager locationManager;
 
     int count = 0;
+    int gpsCount = 0;
 
     public GpsDirectionInfo(Context context) {
         this.mContext = context;
@@ -203,14 +205,14 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 arrowImage.setX(width/6 - 60);
                 arrowImage.setY((height - imgHeight)/2 + (-(-90 + 90) / (float) 90) * (height));
 
-                //double bearing = bearingP1toP2(myLocation.lat,myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
-                double bearing = bearingP1toP2(myLocation.lat,myLocation.lon, 37.545892, 126.964676);
+                double bearing = bearingP1toP2(myLocation.lat,myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
+                //double bearing = bearingP1toP2(myLocation.lat,myLocation.lon, 37.545892, 126.964676);
                 writeLog(myLocation.lat+","+myLocation.lon);
                 double degreeForArrow = event.values[0] - bearing;
                 //double degreeForArrow2 = getDegreeForArrow(count+1);
                 //double degreeForArrow3 = getDegreeForArrow(count+2);
-                //double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());//37.545892, 126.964676
-                double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, 37.545892, 126.964676);
+                double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());//37.545892, 126.964676
+                //double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, 37.545892, 126.964676);
 
                 if(degreeForArrow>0) {
                     while (degreeForArrow > 180)
@@ -222,7 +224,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
                 textView.setText("myLoc: " + myLocation.lat + "," + myLocation.lon
                         +"\ndestLoc" + pathPoints.get(count).getLatitude() +"," + pathPoints.get(count).getLongitude()
-                        +"\ndegree: "+degreeForArrow+"\ndistance: "+distanceForPoint);
+                        +"\ndegree: "+degreeForArrow+"\ndistance: "+distanceForPoint
+                        +" gps호출횟수 : " + gpsCount);
 
                 if(-30 <= degreeForArrow && degreeForArrow <= 30) {
                     arrowImage.setRotation(0);//don't rotate!
@@ -304,6 +307,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         myLocation.lon = location.getLongitude();
         Log.i("****GPS Accuracy", Float.toString(location.getAccuracy()));
         //Log.i("****GpsDirct info", "onLocationChange----lon: " + lon + ",lat: " + lat);
+        gpsCount++;
     }
 
     @Override
@@ -323,6 +327,10 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     public void setPathPoints(ArrayList<Location> pathPoints) {
         this.pathPoints = pathPoints;
+    }
+
+    public void setPointList(ArrayList<Location> pointList) {
+        this.pointList = pointList;
     }
 
     public void setPathDescriptions(HashMap<Integer, String> hashmap) {

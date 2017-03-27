@@ -52,6 +52,7 @@ public class CameraActivity extends AppCompatActivity {
                 super.onPostExecute(aVoid);
                 gpsDirectionInfo.setPathPoints(getPathPoints());
                 gpsDirectionInfo.setPathDescriptions(getPathDescriptions());
+                gpsDirectionInfo.setPointList(getPointList());
                 Log.i("****CameraAtiv","onPostExecute");
             }
         };

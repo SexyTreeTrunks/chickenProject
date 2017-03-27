@@ -48,6 +48,7 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
     private Document responseDocument;
     private String resourceURIString;
     private ArrayList<Location> pathPoints;
+    private ArrayList<Location> pointList;
     private HashMap<Integer,String> pathDescriptions;
 
     @Override
@@ -137,6 +138,7 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
     public ArrayList<Location> getPathPoints() {
         Element root = responseDocument.getDocumentElement();
         pathPoints = new ArrayList<Location>();
+        pointList = new ArrayList<Location>();
         pathDescriptions = new HashMap<Integer, String>();
         int hashmapKeyCount = 0;
         try {
@@ -152,6 +154,16 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
                 } else {
                     coordinates = element.getElementsByTagName("Point").item(0).getTextContent();
                     Log.i("****TmapClient","coordinate: " + coordinates);
+
+                    StringTokenizer splitedLatLon = new StringTokenizer(coordinates, ",");
+                    Location location = new Location("provider");
+                    while(splitedLatLon.hasMoreElements()) {
+                        location.setLongitude(Double.valueOf(splitedLatLon.nextToken()));
+                        location.setLatitude(Double.valueOf(splitedLatLon.nextToken()));
+                        Log.i("****PointCoordinate","longitude: " + location.getLongitude());
+                        Log.i("****PointCoordinate","latitude: " + location.getLatitude());
+                        pointList.add(location);
+                    }
                 }
                 //TODO: Description정보 저장/활용하기
 
@@ -216,5 +228,9 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<Location> getPointList() {
+        return pointList;
     }
 }
