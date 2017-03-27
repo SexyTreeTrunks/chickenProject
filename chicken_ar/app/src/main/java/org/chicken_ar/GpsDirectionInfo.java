@@ -47,7 +47,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     boolean isGetLocation = false;
 
     Location location;
-    double lat; // 위도
+    double lat;
     double lon;
 
     // 최소 GPS 정보 업데이트 거리 1미터
@@ -65,7 +65,6 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     ImageView arrowImage;
     TextView textView;
 
-    BuildingInfo[] buildingLocation;
     BuildingInfo myLocation;
 
     float viewAngle = 20;
@@ -91,11 +90,6 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         cameraActivity = ma;
 
         myLocation = new BuildingInfo(lon, lat, 0);
-        buildingLocation = new BuildingInfo[3];
-
-        buildingLocation[2] = new BuildingInfo(126.963975, 37.545700, 0);//학생회관 37.549441, 127.075201 ->충무    명신관앞
-        buildingLocation[1] = new BuildingInfo(126.965632, 37.545147, 0);//광개토 37.550276, 127.073152 ->   달볶이
-        buildingLocation[0] = new BuildingInfo(126.965576, 37.545156, 0);//충무관 ->학생  앤티앤스
 
         width = ma.dm.widthPixels;
         height = ma.dm.heightPixels;
@@ -201,9 +195,6 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
-            //for (int i = 0; i < 3; i++) {
-                //if (isBuildingVisible(myLocation, buildingLocation[i], event.values[0], event.values[1])) {
-
             //포인트까지의 거리계산
             if(pathPoints != null) {
                 // 화살표 이미지
@@ -219,9 +210,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 //double degreeForArrow2 = getDegreeForArrow(count+1);
                 //double degreeForArrow3 = getDegreeForArrow(count+2);
                 //double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());//37.545892, 126.964676
-                double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, 37.545892, 126.964676);//
-                //화살표 이미지 회전. 쓰려면 activity_camera.xml에서 해당 imageview에 대한 backgraound 사항 지워야함
-                //arrowImage.setImageBitmap(rotateImage(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.duck3), (float) degreeForArrow * (-1)));
+                double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, 37.545892, 126.964676);
 
                 if(degreeForArrow>0) {
                     while (degreeForArrow > 180)
@@ -263,8 +252,6 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 if (-20 <= degree && degree <= 20 && -135 <= gradient && gradient <= -45) {
                     Log.i("test", "해당 위치에 건물 존재");
                     if (i != 0) { //화살표 이미지를 제외한 이미지들만 화면에 나타나게
-                        img[i].setVisibility(View.VISIBLE);
-                        double distance = calculateDistance(myLocation.lat, myLocation.lon, buildingLocation[i].lat, buildingLocation[i].lon);
                         int imageSize = 500 - (int) distance * 10;
                         img[i].getLayoutParams().width = imageSize;
                         img[i].getLayoutParams().height = imageSize;
@@ -279,51 +266,6 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
             }*/
 
         }
-    }
-/*
-    private double getDegreeForArrow(int count_num, float event_value) {
-        //double disXforArrow = pathPoints.get(count_num).getLatitude() - myLocation.lat;
-        double disXforArrow = 37.545954 - myLocation.lat;
-        //double disYforArrow = pathPoints.get(count_num).getLongitude() - myLocation.lon;
-        double disYforArrow = 126.964750 - myLocation.lon;
-
-        double hAngleForArrow = calcHAngle(disXforArrow, disYforArrow);
-        double degreeForArrow = event_value - hAngleForArrow;
-        if (180 < degreeForArrow)
-            degreeForArrow -= 360;
-        else if (degreeForArrow < -180)
-            degreeForArrow += 360;
-        return degreeForArrow;
-    }
-*/
-
-    public double calcHAngle(double disX, double disY) {
-        double offset, hAngle;
-
-        if(disX<0) {
-            disX=-disX;
-            if(disY<0) {
-                disY=-disY;
-                offset = Math.atan(disY/disX)*180/ Math.PI;
-                hAngle= 270 -offset;
-            }
-            else {
-                offset = Math.atan(disY/disX)*180/ Math.PI;
-                hAngle= 270 +offset;
-            }
-        }
-        else {
-            if(disY<0) {
-                disY=-disY;
-                offset = Math.atan(disY/disX)*180/ Math.PI;
-                hAngle= 90 +offset;
-            }
-            else {
-                offset = Math.atan(disY/disX)*180/ Math.PI;
-                hAngle= 90 - offset;
-            }
-        }
-        return hAngle;
     }
 
     public double calculateDistance(double myLatitude, double myLongitude, double buildingLatitude, double buildingLongitude) {
@@ -342,12 +284,12 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     }
 
     // 주어진 도(degree) 값을 라디언으로 변환
-    private double deg2rad(double deg){
+    private double deg2rad(double deg) {
         return (double)(deg * Math.PI / (double)180d);
     }
 
     // 주어진 라디언(radian) 값을 도(degree) 값으로 변환
-    private double rad2deg(double rad){
+    private double rad2deg(double rad) {
         return (double)(rad * (double)180d / Math.PI);
     }
 
@@ -387,7 +329,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         this.pathDescriptions = hashmap;
     }
 
-    public void writeLog(String contents){
+    public void writeLog(String contents) {
         String foldername = Environment.getExternalStorageDirectory().getAbsolutePath()+"/TestLog";
         String filename = "log.txt";
         try{
@@ -410,7 +352,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         }
     }
 
-    public double bearingP1toP2(double P1_latitude, double P1_longitude,   double P2_latitude, double
+    public double bearingP1toP2(double P1_latitude, double P1_longitude, double P2_latitude, double
             P2_longitude) {
         // 현재 위치 : 위도나 경도는 지구 중심을 기반으로 하는 각도이기 때문에
         //라디안 각도로 변환한다.
@@ -437,5 +379,4 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         }
         return true_bearing;
     }
-
 }
