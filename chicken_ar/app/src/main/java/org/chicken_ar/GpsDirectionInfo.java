@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.RotateAnimation;
@@ -21,6 +22,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -207,16 +212,17 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
             //포인트까지의 거리계산
             if(pathPoints != null) {
-                double degreeForArrow = getDegreeForArrow(count, event.values[0]);
+                double bearing = bearingP1toP2(myLocation.lat,myLocation.lon,pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
+                double degreeForArrow = event.values[0] - bearing;
                 //double degreeForArrow2 = getDegreeForArrow(count+1);
                 //double degreeForArrow3 = getDegreeForArrow(count+2);
-
-                Log.i("*****point좌표", "나의좌표 : " + myLocation.lat + ", 나의 위도 : " + myLocation.lon + "\n" +
-                            "건물좌표 : " + pathPoints.get(count).getLatitude() + ", 건물위도 : " + pathPoints.get(count).getLongitude());
-                double distance = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
-
+                double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
+                textView.setText("myLoc: " + myLocation.lat + "," + myLocation.lon
+                        +"destLoc" + pathPoints.get(count).getLatitude() +"," + pathPoints.get(count).getLongitude()
+                        +"\ndegree: "+degreeForArrow+"\ndistance: "+distanceForPoint);
                 //화살표 이미지 회전. 쓰려면 activity_camera.xml에서 해당 imageview에 대한 backgraound 사항 지워야함
                 //arrowImage.setImageBitmap(rotateImage(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.duck3), (float) degreeForArrow * (-1)));
+                /*
                 if(-30 <= degreeForArrow && degreeForArrow <= 30) {
                     arrowImage.setRotation(0);//don't rotate!
                 } else if(degreeForArrow>=-120 &&degreeForArrow<-30) {
@@ -226,17 +232,20 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 } else {
                     arrowImage.setRotation(180);
                 }
-                //arrowImage.setRotation((float)degreeForArrow * (-1));
-                //if(distance < 500)
-                //    textView.setText("다음 포인트까지 남은 거리 : " + (int)distance + "m");
-                if(pathDescriptions.containsKey(count))
-                    textView.setText(pathDescriptions.get(count));
-                    
-                double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
-                if (distanceForPoint <= 1 && count + 1 < pathPoints.size())
+                */
+                arrowImage.setRotation((float)degreeForArrow * (-1));
+                //if(distanceForPoint < 500)
+                 //   textView.setText("다음 포인트까지 남은 거리 : " + (int)distanceForPoint + "m");
+                //if(pathDescriptions.containsKey(count))
+                //    textView.setText(pathDescriptions.get(count));
+
+                if (distanceForPoint <= 5 && count + 1 < pathPoints.size()) {
                     count++;
-                if (distanceForPoint <= 1 && count + 1 == pathPoints.size())
+                    Toast.makeText(mContext.getApplicationContext(),"다음 point값 갱신",Toast.LENGTH_SHORT).show();
+                }
+                if (distanceForPoint <= 5 && count + 1 == pathPoints.size())
                     Toast.makeText(cameraActivity.getApplicationContext(), "목적지에 도착했습니다", Toast.LENGTH_LONG).show();
+
             }
                 /*
                 if (-20 <= degree && degree <= 20 && -135 <= gradient && gradient <= -45) {
@@ -261,8 +270,11 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     }
 
     private double getDegreeForArrow(int count_num, float event_value) {
-        double disXforArrow = pathPoints.get(count_num).getLatitude() - myLocation.lat;
-        double disYforArrow = pathPoints.get(count_num).getLongitude() - myLocation.lon;
+        //double disXforArrow = pathPoints.get(count_num).getLatitude() - myLocation.lat;
+        double disXforArrow = 37.545954 - myLocation.lat;
+        //double disYforArrow = pathPoints.get(count_num).getLongitude() - myLocation.lon;
+        double disYforArrow = 126.964750 - myLocation.lon;
+
         double hAngleForArrow = calcHAngle(disXforArrow, disYforArrow);
         double degreeForArrow = event_value - hAngleForArrow;
         if (180 < degreeForArrow)
@@ -361,6 +373,56 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     public void setPathDescriptions(HashMap<Integer, String> hashmap) {
         this.pathDescriptions = hashmap;
+    }
+
+    public void writeLog(String contents){
+        String foldername = Environment.getExternalStorageDirectory().getAbsolutePath()+"/TestLog";
+        String filename = "log.txt";
+        try{
+            File dir = new File (foldername);
+            //디렉토리 폴더가 없으면 생성함
+            if(!dir.exists()){
+                dir.mkdir();
+            }
+            //파일 output stream 생성
+            FileOutputStream fos = new FileOutputStream(foldername+"/"+filename, true);
+            //파일쓰기
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos));
+            writer.write(contents);
+            writer.newLine();
+            writer.flush();
+            writer.close();
+            fos.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public double bearingP1toP2(double P1_latitude, double P1_longitude,   double P2_latitude, double
+            P2_longitude) {
+        // 현재 위치 : 위도나 경도는 지구 중심을 기반으로 하는 각도이기 때문에
+        //라디안 각도로 변환한다.
+        double Cur_Lat_radian = P1_latitude * (3.141592 / 180);
+        double Cur_Lon_radian = P1_longitude * (3.141592 / 180);
+        // 목표 위치 : 위도나 경도는 지구 중심을 기반으로 하는 각도이기 때문에
+        // 라디안 각도로 변환한다.
+        double Dest_Lat_radian = P2_latitude * (3.141592 / 180);
+        double Dest_Lon_radian = P2_longitude * (3.141592 / 180);
+        // radian distance
+        double radian_distance = 0;
+        radian_distance = Math.acos(Math.sin(Cur_Lat_radian) * Math.sin(Dest_Lat_radian) + Math.cos
+                (Cur_Lat_radian) * Math.cos(Dest_Lat_radian) * Math.cos(Cur_Lon_radian - Dest_Lon_radian));
+        // 목적지 이동 방향을 구한다.(현재 좌표에서 다음 좌표로 이동하기 위해서는
+        //방향을 설정해야 한다. 라디안값이다.
+        double radian_bearing = Math.acos((Math.sin(Dest_Lat_radian) - Math.sin(Cur_Lat_radian) * Math.cos
+                (radian_distance)) / (Math.cos(Cur_Lat_radian) * Math.sin(radian_distance)));
+        // acos의 인수로 주어지는 x는 360분법의 각도가 아닌 radian(호도)값이다.
+        double true_bearing = 0;
+        if (Math.sin(Dest_Lon_radian - Cur_Lon_radian) < 0) {
+            true_bearing = radian_bearing * (180 / 3.141592);   true_bearing = 360 - true_bearing;
+        } else {
+            true_bearing = radian_bearing * (180 / 3.141592);
+        }
+        return true_bearing;
     }
 
 }

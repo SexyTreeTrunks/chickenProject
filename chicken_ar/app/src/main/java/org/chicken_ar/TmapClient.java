@@ -3,6 +3,7 @@ package org.chicken_ar;
 import android.location.Location;
 import android.location.LocationProvider;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,8 +16,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.Provider;
@@ -147,6 +152,8 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
                 //TODO: Description정보 저장/활용하기
 
                 String description = element.getElementsByTagName("description").item(0).getTextContent();
+                //writeLog("coordinates: " + coordinates+", Description: " + description);
+
                 pathDescriptions.put(hashmapKeyCount,description);
 
                 StringTokenizer splitedLocationTokens = new StringTokenizer(coordinates," ");
@@ -169,5 +176,28 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
 
     public HashMap<Integer, String> getPathDescriptions() {
         return pathDescriptions;
+    }
+
+    public void writeLog(String contents){
+        String foldername = Environment.getExternalStorageDirectory().getAbsolutePath()+"/TestLog";
+        String filename = "log.txt";
+        try{
+            File dir = new File(foldername);
+            //디렉토리 폴더가 없으면 생성함
+            if(!dir.exists()){
+                dir.mkdir();
+            }
+            //파일 output stream 생성
+            FileOutputStream fos = new FileOutputStream(foldername+"/"+filename, true);
+            //파일쓰기
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos));
+            writer.write(contents);
+            writer.newLine();
+            writer.flush();
+            writer.close();
+            fos.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
