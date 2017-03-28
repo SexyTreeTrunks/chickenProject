@@ -225,7 +225,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 textView.setText("myLoc: " + myLocation.lat + "," + myLocation.lon
                         +"\ndestLoc" + pathPoints.get(count).getLatitude() +"," + pathPoints.get(count).getLongitude()
                         +"\ndegree: "+degreeForArrow+"\ndistance: "+distanceForPoint
-                        +" gps호출횟수 : " + gpsCount);
+                        +" gps호출횟수 : " + gpsCount
+                        +"\n전체 pathPoint 수 : " + pathPoints.size() + " 현재 pathPoint : " + (count+1));
 
                 if(-30 <= degreeForArrow && degreeForArrow <= 30) {
                     arrowImage.setRotation(0);//don't rotate!
@@ -243,13 +244,16 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 //if(pathDescriptions.containsKey(count))
                 //    textView.setText(pathDescriptions.get(count));
 
-                if (distanceForPoint <= 5 && count + 1 < pathPoints.size()) {
+                if (distanceForPoint <= 8 && count + 1 < pathPoints.size()) {
                     count++;
                     Toast.makeText(mContext.getApplicationContext(),"다음 point값 갱신",Toast.LENGTH_SHORT).show();
                 }
-                if (distanceForPoint <= 5 && count + 1 == pathPoints.size())
+                if (distanceForPoint <= 8 && count + 1 == pathPoints.size())
                     Toast.makeText(cameraActivity.getApplicationContext(), "목적지에 도착했습니다", Toast.LENGTH_LONG).show();
 
+                Log.d("*****pointList", pointList.size() + "");
+                for(int i = 0; i < pointList.size(); i++)
+                    Log.d("*****pointList", pointList.get(i) + "");
             }
                 /*
                 if (-20 <= degree && degree <= 20 && -135 <= gradient && gradient <= -45) {
