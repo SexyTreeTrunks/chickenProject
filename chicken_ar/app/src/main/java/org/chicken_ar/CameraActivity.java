@@ -30,9 +30,31 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         dm = getApplicationContext().getResources().getDisplayMetrics();
         mCameraTextureView = (TextureView) findViewById(R.id.cameraTextureView);
         mPreview = new Preview(this, mCameraTextureView);
+        
+        Log.d("****Camera Actv","onCreate 실행");
+    }
+
+    public void getDistancePerPoint() {
+        distancePerPoint = new ArrayList<Double>();
+        for (int i = 0; i < tmapClient.getPathPoints().size() - 1; i++) {
+            Location currentPoint = tmapClient.getPathPoints().get(i);
+            Location nextPoint = tmapClient.getPathPoints().get(i + 1);
+            double distance = gpsDirectionInfo.calculateDistance(currentPoint.getLatitude(), currentPoint.getLongitude(),
+                    nextPoint.getLatitude(), nextPoint.getLongitude());
+            totalDistance += distance;
+            distancePerPoint.add(distance);
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPreview.onResume();
 
         Intent intent = getIntent();
         dest_lon = intent.getExtras().getDouble("DEST_LON_KEY");
@@ -55,43 +77,22 @@ public class CameraActivity extends AppCompatActivity {
 
         try {
             tmapClient.execute(Double.toString(gpsDirectionInfo.lon),Double.toString(gpsDirectionInfo.lat),Double.toString(dest_lon),Double.toString(dest_lat)).get();
-            if(tmapClient.getStatus() == AsyncTask.Status.FINISHED) {
-                Toast.makeText(getApplicationContext(), "tmapData 겟또!", Toast.LENGTH_SHORT).show();
-            }
 
         } catch (Exception e) {
             Log.e("****CameraActv error","tmapClient execute error");
             e.printStackTrace();
         }
-        Log.d("****Camera Actv","onCreate 실행");
-    }
-
-    public void getDistancePerPoint() {
-        distancePerPoint = new ArrayList<Double>();
-        for (int i = 0; i < tmapClient.getPathPoints().size() - 1; i++) {
-            Location currentPoint = tmapClient.getPathPoints().get(i);
-            Location nextPoint = tmapClient.getPathPoints().get(i + 1);
-            double distance = gpsDirectionInfo.calculateDistance(currentPoint.getLatitude(), currentPoint.getLongitude(),
-                    nextPoint.getLatitude(), nextPoint.getLongitude());
-            totalDistance += distance;
-            distancePerPoint.add(distance);
-        }
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mPreview.onResume();
         Log.d("****Camera Actv", "onResume 실행");
-
-        if(tmapClient.getStatus() == AsyncTask.Status.FINISHED)
-            pathPoints = tmapClient.getPathPoints();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mPreview.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 }
