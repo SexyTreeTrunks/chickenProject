@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -39,6 +41,7 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
     double lon;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
     private static final long MIN_TIME_BW_UPDATES = 1000 * 1;
+    Button buttonAR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +67,19 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
         mListView.setOnItemClickListener(this);
         new DiningDataDownload(this).execute(CategoryType.CAFE);
 
+        buttonAR = (Button) findViewById(R.id.buttonAR);
+        buttonAR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Intent arIntent = new Intent(getApplicationContext(), AugmentedReality.class);
+                    arIntent.putExtra("AR", true);
+                    startActivity(arIntent);
+                } catch(Exception e) {
+                    Log.d("****Exception!", ""+e);
+                }
+            }
+        });
     }
 
     @Override

@@ -50,6 +50,10 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
+        <activity android:name=".AugmentedReality"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
         <activity android:name=".InfoActivity"
             android:windowSoftInputMode="stateHidden|adjustPan"/>
     </application>
