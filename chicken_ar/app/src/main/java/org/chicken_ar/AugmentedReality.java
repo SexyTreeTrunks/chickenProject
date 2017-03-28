@@ -18,7 +18,7 @@ import java.util.List;
 
 public class AugmentedReality extends AppCompatActivity implements DiningDataDownload.Listener {
 
-    ArrayList<DiningInfoListViewItem> totalStoreList;
+    ArrayList<DiningInfo> totalStoreList;
     List<DiningInfo> diningInfoList;
     ArrayList<DiningInfoListViewItem> listViewItemList;
 
@@ -36,7 +36,7 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
         mCameraTextureView = (TextureView) findViewById(R.id.cameraARTextureView);
         mPreview = new Preview(this, mCameraTextureView);
 
-        totalStoreList = new ArrayList<DiningInfoListViewItem>();
+        totalStoreList = new ArrayList<DiningInfo>();
 
         new DiningDataDownload(this).execute(CategoryType.CAFE);
         new DiningDataDownload(this).execute(CategoryType.DINING_KOREA);
@@ -49,17 +49,7 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
     @Override
     public void onLoaded(List<DiningInfo> diningInfoList) {
         this.diningInfoList = diningInfoList;
-        listViewItemList = new ArrayList<DiningInfoListViewItem>();
-        for(int i = 0; i < diningInfoList.size(); i++) {
-            DiningInfoListViewItem listViewItem = new DiningInfoListViewItem();
-            listViewItem.setName(diningInfoList.get(i).getName());
-            listViewItem.setRatingStar((float)diningInfoList.get(i).getratingStar()/2);
-            //Location myLocation = getLocation();
-            int calculatedDistance = 0;
-            listViewItem.setDistance(calculatedDistance);
-            listViewItemList.add(listViewItem);
-        }
-        totalStoreList.addAll(listViewItemList);
+        totalStoreList.addAll(diningInfoList);
     }
 
     @Override
