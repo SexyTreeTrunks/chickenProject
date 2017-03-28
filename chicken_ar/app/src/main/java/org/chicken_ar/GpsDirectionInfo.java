@@ -38,6 +38,10 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     private ArrayList<Location> pathPoints;
     private ArrayList<Location> pointList;
     private HashMap<Integer,String> pathDescriptions;
+    private ArrayList<Double> distancePerPoint;
+    double totalDistance = 0;
+    double remainDistance;
+
     // 현재 GPS 사용유무
     boolean isGPSEnabled = false;
 
@@ -214,6 +218,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());//37.545892, 126.964676
                 //double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, 37.545892, 126.964676);
 
+                double distanceForUser = remainDistance + distanceForPoint;
+
                 if(degreeForArrow>0) {
                     while (degreeForArrow > 180)
                         degreeForArrow -= 360;
@@ -224,15 +230,16 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
                 textView.setText("myLoc: " + myLocation.lat + "," + myLocation.lon
                         +"\ndestLoc" + pathPoints.get(count).getLatitude() +"," + pathPoints.get(count).getLongitude()
-                        +"\ndegree: "+degreeForArrow+"\ndistance: "+distanceForPoint
+                        +"\ndegree: "+degreeForArrow+"\ndistance: "+distanceForUser
                         +" gps호출횟수 : " + gpsCount
+                        +"\nremainDis : " + remainDistance
                         +"\n전체 pathPoint 수 : " + pathPoints.size() + " 현재 pathPoint : " + (count+1));
 
-                if(-30 <= degreeForArrow && degreeForArrow <= 30) {
+                if(-45 <= degreeForArrow && degreeForArrow <= 45) {
                     arrowImage.setRotation(0);//don't rotate!
-                } else if(degreeForArrow>=-120 &&degreeForArrow<-30) {
+                } else if(degreeForArrow>=-120 && degreeForArrow<-45) {
                     arrowImage.setRotation(90);
-                } else if(degreeForArrow<=120 && degreeForArrow>30) {
+                } else if(degreeForArrow<=120 && degreeForArrow>45) {
                     arrowImage.setRotation(-90);
                 } else {
                     arrowImage.setRotation(180);
@@ -244,16 +251,13 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 //if(pathDescriptions.containsKey(count))
                 //    textView.setText(pathDescriptions.get(count));
 
-                if (distanceForPoint <= 8 && count + 1 < pathPoints.size()) {
+                if (distanceForPoint <= 10 && count + 1 < pathPoints.size()) {
+                    remainDistance = remainDistance - distancePerPoint.get(count);
                     count++;
                     Toast.makeText(mContext.getApplicationContext(),"다음 point값 갱신",Toast.LENGTH_SHORT).show();
                 }
-                if (distanceForPoint <= 8 && count + 1 == pathPoints.size())
+                if (distanceForPoint <= 10 && count + 1 == pathPoints.size())
                     Toast.makeText(cameraActivity.getApplicationContext(), "목적지에 도착했습니다", Toast.LENGTH_LONG).show();
-
-                Log.d("*****pointList", pointList.size() + "");
-                for(int i = 0; i < pointList.size(); i++)
-                    Log.d("*****pointList", pointList.get(i) + "");
             }
                 /*
                 if (-20 <= degree && degree <= 20 && -135 <= gradient && gradient <= -45) {
@@ -337,8 +341,17 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         this.pointList = pointList;
     }
 
+    public void setDistancePerPoint(ArrayList<Double> distancePerPoint) {
+        this.distancePerPoint = distancePerPoint;
+    }
+
     public void setPathDescriptions(HashMap<Integer, String> hashmap) {
         this.pathDescriptions = hashmap;
+    }
+
+    public void setTotalDistanceAndRemainDistance(double totalDistance) {
+        this.totalDistance = totalDistance;
+        remainDistance = totalDistance - distancePerPoint.get(0);
     }
 
     public void writeLog(String contents) {
