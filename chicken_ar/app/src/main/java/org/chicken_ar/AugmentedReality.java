@@ -1,5 +1,6 @@
 package org.chicken_ar;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -80,6 +81,8 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
         new DiningDataDownload(this).execute(CategoryType.DINING_JAPANESE);
         new DiningDataDownload(this).execute(CategoryType.DINING_CHINESE);
         new DiningDataDownload(this).execute(CategoryType.DINING_WESTERN);
+
+
 
         getLocation();
         myLocation = new BuildingInfo(lon, lat, 0);
@@ -220,6 +223,7 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
                                 Double.parseDouble(temp.getLongitude()));
 
                         setImage(temp.getName(), storeTypeInt, degree, distance);
+                        setClickIistener(temp);
                         count++;
                     }
                 }
@@ -258,6 +262,25 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
             }
         }
         Log.d("****Activated", "!!!!!!!!!");
+    }
+
+
+    private void setClickIistener(final DiningInfo diningInfo) {
+        textViewAR[count].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Intent infoIntent = new Intent(getApplicationContext(), InfoActivity.class);
+                    infoIntent.putExtra("NAME",diningInfo.getName());
+                    infoIntent.putExtra("LON",Double.valueOf(diningInfo.getLongitude()));
+                    infoIntent.putExtra("LAT",Double.valueOf(diningInfo.getLatitude()));
+                    infoIntent.putExtra("RATINGSTARS",diningInfo.getratingStar());
+                    startActivity(infoIntent);
+                } catch (Exception e) {
+                    Log.d("****Exception!", "" + e);
+                }
+            }
+        });
     }
 
     public double bearingP1toP2(double P1_latitude, double P1_longitude, double P2_latitude, double
@@ -332,4 +355,5 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
         super.onPause();
         mPreview.onPause();
     }
+
 }
