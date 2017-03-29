@@ -69,9 +69,9 @@
         <ViewFlipper
             android:id="@+id/viewFlipper"
             android:layout_width="match_parent"
-            android:layout_height="145dp"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
+            android:layout_alignParentStart="true"
+            android:layout_height="177dp">
 
             <ImageView
                 android:id="@+id/imageForViewFlipper1"
@@ -100,21 +100,27 @@
                 android:layout_height="match_parent">
 
                 <RatingBar
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/ratingBarForUser"
-                    android:layout_weight="0.05" />
+                    style="?android:attr/ratingBarStyleIndicator"
+                    android:layout_width="wrap_content" />
 
                 <Space
-                    android:layout_width="40dp"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.05"
+                    android:layout_width="66dp" />
 
                 <Button
-                    android:text="작성"
-                    android:layout_width="wrap_content"
+                    android:text="작 성"
                     android:layout_height="wrap_content"
                     android:id="@+id/buttonUploadReview"
                     android:layout_gravity="right|center"
+                    android:layout_weight="0.05"
+                    android:layout_width="wrap_content" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.05" />
             </LinearLayout>
 
