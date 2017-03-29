@@ -211,7 +211,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 double bearing = bearingP1toP2(myLocation.lat,myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
                 //double bearing = bearingP1toP2(myLocation.lat,myLocation.lon, 37.545892, 126.964676);
                 writeLog(myLocation.lat+","+myLocation.lon + "->" + pathPoints.get(count).getLatitude() +"," + pathPoints.get(count).getLongitude());
-                double degreeForArrow = event.values[0] - bearing;
+                int degreeForArrow = (int)(event.values[0] - bearing);
                 //double degreeForArrow2 = getDegreeForArrow(count+1);
                 //double degreeForArrow3 = getDegreeForArrow(count+2);
                 double distanceForPoint = calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());//37.545892, 126.964676
