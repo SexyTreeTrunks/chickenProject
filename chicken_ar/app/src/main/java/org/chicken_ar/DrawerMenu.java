@@ -11,6 +11,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -67,8 +69,8 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
         mListView.setOnItemClickListener(this);
         new DiningDataDownload(this).execute(CategoryType.CAFE);
 
-        buttonAR = (Button) findViewById(R.id.buttonAR);
-        buttonAR.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingButton);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
@@ -80,6 +82,7 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
                 }
             }
         });
+
     }
 
     @Override
@@ -157,7 +160,7 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
             listViewItem.setName(diningInfoList.get(i).getName());
             listViewItem.setRatingStar((float)diningInfoList.get(i).getratingStar()/2);
             //Location myLocation = getLocation();
-            int calculatedDistance = calculateDistance(0,0/*myLocation.getLatitude(),myLocation.getLongitude()*/,
+            int calculatedDistance = calculateDistance(37.545201, 126.964885/*myLocation.getLatitude(),myLocation.getLongitude()*/,
                     Double.valueOf(diningInfoList.get(i).getLatitude()),Double.valueOf(diningInfoList.get(i).getLongitude()));
             listViewItem.setDistance(calculatedDistance);
             listViewItemList.add(listViewItem);

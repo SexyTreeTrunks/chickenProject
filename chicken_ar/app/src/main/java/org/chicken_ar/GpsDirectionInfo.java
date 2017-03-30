@@ -36,8 +36,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     private final Context mContext;
     private ArrayList<Location> pathPoints;
-    private ArrayList<Location> pointList;
-    private HashMap<Integer,String> pathDescriptions;
+    //private ArrayList<Location> pointList;
+    private ArrayList<String> pathDescriptions;
     private ArrayList<Double> distancePerPoint;
     double totalDistance = 0;
     double remainDistance;
@@ -68,6 +68,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     CameraActivity cameraActivity;
 
     ImageView arrowImage;
+    ImageView destinationPinImage;
     TextView textView;
 
     BuildingInfo myLocation;
@@ -102,6 +103,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
         arrowImage = (ImageView)ma.findViewById(R.id.duck3);
         textView = (TextView)ma.findViewById(R.id.textView);
+        destinationPinImage = (ImageView) ma.findViewById(R.id.destination_pin);
 
         imgWidth = (float) arrowImage.getLayoutParams().width;
         imgHeight = (float) arrowImage.getLayoutParams().height;
@@ -210,7 +212,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
                 double bearing = bearingP1toP2(myLocation.lat,myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
                 //double bearing = bearingP1toP2(myLocation.lat,myLocation.lon, 37.545892, 126.964676);
-                writeLog(myLocation.lat+","+myLocation.lon + "->" + pathPoints.get(count).getLatitude() +"," + pathPoints.get(count).getLongitude());
+                //writeLog(myLocation.lat+","+myLocation.lon + "->" + pathPoints.get(count).getLatitude() +"," + pathPoints.get(count).getLongitude());
                 int degreeForArrow = (int)(event.values[0] - bearing);
                 //double degreeForArrow2 = getDegreeForArrow(count+1);
                 //double degreeForArrow3 = getDegreeForArrow(count+2);
@@ -227,12 +229,13 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                         degreeForArrow += 360;
                 }
 
-                textView.setText("myLoc: " + myLocation.lat + "," + myLocation.lon
-                        +"\ndestLoc" + pathPoints.get(count).getLatitude() +"," + pathPoints.get(count).getLongitude()
-                        +"\ndegree: "+degreeForArrow+"\ndistance: "+distanceForUser
-                        +" gps호출횟수 : " + gpsCount
-                        +"\nremainDis : " + remainDistance
-                        +"\n전체 pathPoint 수 : " + pathPoints.size() + " 현재 pathPoint : " + (count+1));
+                String description;
+                if(count < pathPoints.size() && pathPoints.get(count+1).getProvider().equals("Point")) {
+                    description = "\n" + pathDescriptions.get(count+1);
+                } else {
+                    description = "\n총 남은거리 : " + remainDistance;
+                }
+                textView.setText("\n총 남은거리 : " + remainDistance + description);
 
                 if(-45 <= degreeForArrow && degreeForArrow <= 45) {
                     arrowImage.setRotation(0);//don't rotate!
@@ -250,6 +253,16 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 //if(pathDescriptions.containsKey(count))
                 //    textView.setText(pathDescriptions.get(count));
 
+                int destPointIndex = pathPoints.size() - 1;
+                double degreeForDest = event.values[0] - calculateDistance(myLocation.lat, myLocation.lon,pathPoints.get(destPointIndex).getLatitude(), pathPoints.get(destPointIndex).getLongitude());
+                int gradient = (int) event.values[1];
+                if (-20 <= degreeForDest && degreeForDest <= 20 && -135 <= gradient && gradient <= -45) {
+                    Log.i("test", "해당 위치에 건물 존재");
+                    destinationPinImage.setVisibility(View.VISIBLE);
+                    destinationPinImage.setX((float) ((width - destinationPinImage.getWidth()) / 2 + width * (-(degreeForDest) / viewAngle)));
+                    destinationPinImage.setY((height - destinationPinImage.getHeight()) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height));
+                }
+
                 if (distanceForPoint <= 10 && count + 1 < pathPoints.size()) {
                     remainDistance = remainDistance - distancePerPoint.get(count);
                     count++;
@@ -258,22 +271,6 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 if (distanceForPoint <= 10 && count + 1 == pathPoints.size())
                     Toast.makeText(cameraActivity.getApplicationContext(), "목적지에 도착했습니다", Toast.LENGTH_LONG).show();
             }
-                /*
-                if (-20 <= degree && degree <= 20 && -135 <= gradient && gradient <= -45) {
-                    Log.i("test", "해당 위치에 건물 존재");
-                    if (i != 0) { //화살표 이미지를 제외한 이미지들만 화면에 나타나게
-                        int imageSize = 500 - (int) distance * 10;
-                        img[i].getLayoutParams().width = imageSize;
-                        img[i].getLayoutParams().height = imageSize;
-
-                        img[i].setX((float) ((width - imgWidth[i]) / 2 + width * (-(degree) / viewAngle)));
-                        img[i].setY((height - imgHeight[i]) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height));
-                    }
-                }
-//                img.setX(width*((viewAngle - (event.values[0] - hAngle)) /(viewAngle*2)) - imgWidth);
-//                img.setY(height*(-(90 + (int)event.values[1])/(viewAngle*2)) - imgHeight);
-                //}
-            }*/
 
         }
     }
@@ -336,16 +333,14 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         this.pathPoints = pathPoints;
     }
 
-    public void setPointList(ArrayList<Location> pointList) {
-        this.pointList = pointList;
-    }
+    //public void setPointList(ArrayList<Location> pointList) {this.pointList = pointList;}
 
     public void setDistancePerPoint(ArrayList<Double> distancePerPoint) {
         this.distancePerPoint = distancePerPoint;
     }
 
-    public void setPathDescriptions(HashMap<Integer, String> hashmap) {
-        this.pathDescriptions = hashmap;
+    public void setPathDescriptions(ArrayList<String> arrayList) {
+        this.pathDescriptions = arrayList;
     }
 
     public void setTotalDistanceAndRemainDistance(double totalDistance) {

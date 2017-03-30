@@ -30,11 +30,4 @@
 
     </LinearLayout>
 
-    <Button
-        android:text="주변"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonAR"
-        android:layout_weight="1" />
-
 </LinearLayout>

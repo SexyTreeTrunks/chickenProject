@@ -48,8 +48,8 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
     private Document responseDocument;
     private String resourceURIString;
     private ArrayList<Location> pathPoints;
-    private ArrayList<Location> pointList;
-    private HashMap<Integer,String> pathDescriptions;
+    //private ArrayList<Location> pointList;
+    private ArrayList<String> pathDescriptions;
 
     @Override
     protected Void doInBackground(String... params) {
@@ -138,8 +138,8 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
     public ArrayList<Location> getPathPoints() {
         Element root = responseDocument.getDocumentElement();
         pathPoints = new ArrayList<Location>();
-        pointList = new ArrayList<Location>();
-        pathDescriptions = new HashMap<Integer, String>();
+        //pointList = new ArrayList<Location>();
+        pathDescriptions = new ArrayList<String>();
         int hashmapKeyCount = 0;
         try {
             NodeList nodeList = root.getElementsByTagName("Placemark");
@@ -154,7 +154,9 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
                 } else {
                     coordinates = element.getElementsByTagName("Point").item(0).getTextContent();
                     Log.i("****TmapClient","coordinate: " + coordinates);
-
+                    String description = element.getElementsByTagName("description").item(0).getTextContent();
+                    pathDescriptions.add(description);
+                    /*
                     StringTokenizer splitedLatLon = new StringTokenizer(coordinates, ",");
                     Location location = new Location("provider");
                     while(splitedLatLon.hasMoreElements()) {
@@ -164,19 +166,21 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
                         Log.i("****PointCoordinate","latitude: " + location.getLatitude());
                         pointList.add(location);
                     }
+                    */
                 }
-                //TODO: Description정보 저장/활용하기
 
-                String description = element.getElementsByTagName("description").item(0).getTextContent();
                 //writeLog("coordinates: " + coordinates+", Description: " + description);
 
-                pathDescriptions.put(hashmapKeyCount, description);
 
                 StringTokenizer splitedLocationTokens = new StringTokenizer(coordinates, " ");
                 splitedLocationTokens.nextToken();
                 for (int j = 0; splitedLocationTokens.hasMoreElements(); j++, hashmapKeyCount++) {
                     StringTokenizer locationTokens = new StringTokenizer(splitedLocationTokens.nextToken(), ",");
-                    Location location = new Location("provider");
+                    Location location;
+                    if(nodeType.contains("LINE"))
+                        location = new Location("Line");
+                    else
+                        location = new Location("Point");
                     for (int k = 0; locationTokens.hasMoreElements(); k++) {
                         location.setLongitude(Double.valueOf(locationTokens.nextToken()));
                         location.setLatitude(Double.valueOf(locationTokens.nextToken()));
@@ -203,7 +207,7 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
         return pathPoints;
     }
 
-    public HashMap<Integer, String> getPathDescriptions() {
+    public ArrayList<String> getPathDescriptions() {
         return pathDescriptions;
     }
 
@@ -229,8 +233,5 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
             e.printStackTrace();
         }
     }
-
-    public ArrayList<Location> getPointList() {
-        return pointList;
-    }
+    //public ArrayList<Location> getPointList() {return pointList;}
 }

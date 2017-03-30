@@ -65,7 +65,7 @@ public class ListViewAdapter extends BaseAdapter {
             // 아이템 내 각 위젯에 데이터 반영
             ratingBar.setRating(listViewItem.getRatingStar());
             nameTextView.setText(listViewItem.getName());
-            distanceTextView.setText(Float.toString(listViewItem.getDistance()));
+            distanceTextView.setText(Integer.toString(listViewItem.getDistance()) + "m");
 
             return convertView;
 
