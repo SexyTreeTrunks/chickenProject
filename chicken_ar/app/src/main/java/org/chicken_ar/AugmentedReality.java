@@ -42,6 +42,7 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
     float screenWidth;
     float screenHeight;
     int userDegree;
+    float gradient;
     int count = 0;
 
     boolean isGPSEnabled = false;
@@ -171,6 +172,7 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
             userDegree = (int)event.values[0];
+            gradient = event.values[1];
             getStoreNearBy();
         }
     }
@@ -237,9 +239,10 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
     private void setImage(String storeName, int storeTypeInt, int degree, double distance) {
         if(degree >= -20 && degree <= 20) {
             textViewAR[count].setX((float) ((screenWidth - 93) / 2 + screenWidth * (-(degree) / viewAngle)));
-            textViewAR[count].setY((screenHeight - 150) / 2 + (-((int) -90 + 90) / (float) 90) * (screenHeight));
+            textViewAR[count].setY((screenHeight - 150) / 2 + (-((int) gradient + 90) / (float) 90) * (screenHeight));
             textViewAR[count].setText((int)distance + "m\n" + storeName);
             textViewAR[count].setVisibility(View.VISIBLE);
+
             switch(storeTypeInt) {
                 case 1:
                     textViewAR[count].setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.cafe, 0, 0);

@@ -11,7 +11,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:text="치킨 예술의 이해"
+        android:text="뭐먹을래?"
         android:layout_width="match_parent"
         android:layout_height="157dp"
         android:id="@+id/TextViewLoginTitle"

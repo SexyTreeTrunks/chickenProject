@@ -207,7 +207,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 // 화살표 이미지
                 arrowImage.setVisibility(View.VISIBLE);
                 //arrowImage.setX((width - imgWidth) / 2);
-                arrowImage.setX(width/6 - 60);
+                arrowImage.setX(100);
                 arrowImage.setY((height - imgHeight)/2 + (-(-90 + 90) / (float) 90) * (height));
 
                 double bearing = bearingP1toP2(myLocation.lat,myLocation.lon, pathPoints.get(count).getLatitude(), pathPoints.get(count).getLongitude());
@@ -229,47 +229,58 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                         degreeForArrow += 360;
                 }
 
-                String description;
-                if(count < pathPoints.size() && pathPoints.get(count+1).getProvider().equals("Point")) {
-                    description = "\n" + pathDescriptions.get(count+1);
-                } else {
-                    description = "\n총 남은거리 : " + remainDistance;
-                }
-                textView.setText("\n총 남은거리 : " + remainDistance + description);
+                try {
+                    String description;
+                    if (count < pathPoints.size() - 1 && pathPoints.get(count + 1).getProvider().equals("Point")) {
+                        description = pathDescriptions.get(count + 1);
+                    } else {
+                        description = "총 남은거리 : " + (int) distanceForUser + "m";
+                    }
+                    if (distanceForUser < 100000)
+                        textView.setText(description);
 
-                if(-45 <= degreeForArrow && degreeForArrow <= 45) {
-                    arrowImage.setRotation(0);//don't rotate!
-                } else if(degreeForArrow>=-120 && degreeForArrow<-45) {
-                    arrowImage.setRotation(90);
-                } else if(degreeForArrow<=120 && degreeForArrow>45) {
-                    arrowImage.setRotation(-90);
-                } else {
-                    arrowImage.setRotation(180);
+                    if (-45 <= degreeForArrow && degreeForArrow <= 45) {
+                        arrowImage.setRotation(0);//don't rotate!
+                    } else if (degreeForArrow >= -120 && degreeForArrow < -45) {
+                        arrowImage.setRotation(90);
+                    } else if (degreeForArrow <= 120 && degreeForArrow > 45) {
+                        arrowImage.setRotation(-90);
+                    } else {
+                        arrowImage.setRotation(180);
+                    }
+                } catch(Exception e) {
+
                 }
 
                 //arrowImage.setRotation((float)degreeForArrow * (-1));
-                //if(distanceForPoint < 500)
+                //if(distanceForPoint < 1000)
                  //   textView.setText("다음 포인트까지 남은 거리 : " + (int)distanceForPoint + "m");
                 //if(pathDescriptions.containsKey(count))
                 //    textView.setText(pathDescriptions.get(count));
 
-                int destPointIndex = pathPoints.size() - 1;
-                double degreeForDest = event.values[0] - calculateDistance(myLocation.lat, myLocation.lon,pathPoints.get(destPointIndex).getLatitude(), pathPoints.get(destPointIndex).getLongitude());
-                int gradient = (int) event.values[1];
-                if (-20 <= degreeForDest && degreeForDest <= 20 && -135 <= gradient && gradient <= -45) {
-                    Log.i("test", "해당 위치에 건물 존재");
-                    destinationPinImage.setVisibility(View.VISIBLE);
-                    destinationPinImage.setX((float) ((width - destinationPinImage.getWidth()) / 2 + width * (-(degreeForDest) / viewAngle)));
-                    destinationPinImage.setY((height - destinationPinImage.getHeight()) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height));
-                }
+                try {
+                    if (distanceForPoint <= 10 && count + 1 < pathPoints.size()) {
+                        remainDistance = remainDistance - distancePerPoint.get(count);
+                        count++;
+                        Toast.makeText(mContext.getApplicationContext(), "다음 point값 갱신", Toast.LENGTH_SHORT).show();
+                    }
+                    if (distanceForUser <= 5)
+                        Toast.makeText(cameraActivity.getApplicationContext(), "목적지에 도착했습니다", Toast.LENGTH_LONG).show();
 
-                if (distanceForPoint <= 10 && count + 1 < pathPoints.size()) {
-                    remainDistance = remainDistance - distancePerPoint.get(count);
-                    count++;
-                    Toast.makeText(mContext.getApplicationContext(),"다음 point값 갱신",Toast.LENGTH_SHORT).show();
+                    if(distanceForUser <= 8) {
+                        int destPointIndex = pathPoints.size() - 1;
+                        double degreeForDest = event.values[0] - calculateDistance(myLocation.lat, myLocation.lon, pathPoints.get(destPointIndex).getLatitude(), pathPoints.get(destPointIndex).getLongitude());
+                        int gradient = (int) event.values[1];
+                        if (-20 <= degreeForDest && degreeForDest <= 20 && -135 <= gradient && gradient <= -45) {
+                            Log.i("test", "해당 위치에 건물 존재");
+                            destinationPinImage.setVisibility(View.VISIBLE);
+                            destinationPinImage.setX((float) ((width - destinationPinImage.getWidth()) / 2 + width * (-(degreeForDest) / viewAngle)));
+                            destinationPinImage.setY((height - destinationPinImage.getHeight()) / 2 + (-((int) (event.values[1]) + 90) / (float) 90) * (height));
+                        }
+                    }
+                } catch(Exception e) {
+
                 }
-                if (distanceForPoint <= 10 && count + 1 == pathPoints.size())
-                    Toast.makeText(cameraActivity.getApplicationContext(), "목적지에 도착했습니다", Toast.LENGTH_LONG).show();
             }
 
         }
