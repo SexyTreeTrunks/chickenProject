@@ -61,8 +61,6 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
     // 최소 GPS 정보 업데이트 시간 밀리세컨이므로 1초
     private static final long MIN_TIME_BW_UPDATES = 1000 * 1;
 
-    //=====================================================
-
     SensorManager m_sensor_manager;
     Sensor m_ot_sensor;
     CameraActivity cameraActivity;
@@ -85,6 +83,7 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     int count = 0;
     int gpsCount = 0;
+    int descriptionCount = 0;
 
     public GpsDirectionInfo(Context context) {
         this.mContext = context;
@@ -108,29 +107,6 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
         imgWidth = (float) arrowImage.getLayoutParams().width;
         imgHeight = (float) arrowImage.getLayoutParams().height;
 
-        /*for(int i=0;i<3;i++) {
-            img[i].getLayoutParams().width = 200;
-            img[i].getLayoutParams().height = 200;
-
-            imgWidth[i]=(float) img[i].getLayoutParams().width;
-            imgHeight[i]=(float) img[i].getLayoutParams().height;
-
-            final int finali = i;
-
-            img[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //if(finali==0)
-                    //    Toast.makeText(cameraActivity.getApplicationContext(),"더 가까이 가서 선택해주세요",Toast.LENGTH_SHORT).show();
-                    //else{
-                    Intent intent = new Intent(cameraActivity.getApplicationContext(), InfoActivity.class);
-                    intent.putExtra("index", finali);
-                    cameraActivity.startActivity(intent);
-                    //}
-                }
-            });
-        }*/
-
         // 시스템서비스로부터 SensorManager 객체를 얻는다.
         m_sensor_manager = (SensorManager)ma.getSystemService(SENSOR_SERVICE);
         // SensorManager 를 이용해서 방향 센서 객체를 얻는다.
@@ -141,16 +117,13 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
     public Location getLocation() {
         try {
-            locationManager = (LocationManager) mContext
-                    .getSystemService(LOCATION_SERVICE);
+            locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
             // GPS 정보 가져오기
-            isGPSEnabled = locationManager
-                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
+            isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
             // 현재 네트워크 상태 값 알아오기
-            isNetworkEnabled = locationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
             if(!isGPSEnabled && !isNetworkEnabled) {
                 // GPS 와 네트워크사용이 가능하지 않을때 소스 구현
@@ -231,8 +204,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
 
                 try {
                     String description;
-                    if (count < pathPoints.size() - 1 && pathPoints.get(count + 1).getProvider().equals("Point")) {
-                        description = pathDescriptions.get(count + 1);
+                    if (descriptionCount < pathDescriptions.size() - 1 && pathPoints.get(count + 1).getProvider().equals("Point")) {
+                        description = pathDescriptions.get(descriptionCount);
                     } else {
                         description = "총 남은거리 : " + (int) distanceForUser + "m";
                     }
@@ -261,6 +234,8 @@ public class GpsDirectionInfo implements SensorEventListener, LocationListener {
                 try {
                     if (distanceForPoint <= 10 && count + 1 < pathPoints.size()) {
                         remainDistance = remainDistance - distancePerPoint.get(count);
+                        if(pathPoints.get(count).getProvider().equals("Point"))
+                            descriptionCount++;
                         count++;
                         Toast.makeText(mContext.getApplicationContext(), "다음 point값 갱신", Toast.LENGTH_SHORT).show();
                     }

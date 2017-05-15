@@ -87,7 +87,6 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
 
     @Override
     public void onBackPressed() {
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -133,16 +132,13 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
                 new DiningDataDownload(this).execute(CategoryType.DINING_WESTERN);
                 break;
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-
         return true;
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
         Intent infoActivityIntent = new Intent(getApplicationContext(), InfoActivity.class);
         infoActivityIntent.putExtra("NAME",diningInfoList.get(position).getName());
         infoActivityIntent.putExtra("LON",Double.valueOf(diningInfoList.get(position).getLongitude()));
@@ -159,9 +155,7 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
             DiningInfoListViewItem listViewItem = new DiningInfoListViewItem();
             listViewItem.setName(diningInfoList.get(i).getName());
             listViewItem.setRatingStar((float)diningInfoList.get(i).getratingStar()/2);
-            //Location myLocation = getLocation();
-            int calculatedDistance = calculateDistance(37.545201, 126.964885/*myLocation.getLatitude(),myLocation.getLongitude()*/,
-                    Double.valueOf(diningInfoList.get(i).getLatitude()),Double.valueOf(diningInfoList.get(i).getLongitude()));
+            int calculatedDistance = calculateDistance(37.545201, 126.964885, Double.valueOf(diningInfoList.get(i).getLatitude()),Double.valueOf(diningInfoList.get(i).getLongitude()));
             listViewItem.setDistance(calculatedDistance);
             listViewItemList.add(listViewItem);
         }
@@ -194,7 +188,6 @@ public class DrawerMenu extends AppCompatActivity implements NavigationView.OnNa
     }
 
     private void loadListView() {
-
         ListViewAdapter listViewAdapter = new ListViewAdapter();
         listViewAdapter.initAdapterToDiningInfo(listViewItemList);
         mListView.setAdapter(listViewAdapter);

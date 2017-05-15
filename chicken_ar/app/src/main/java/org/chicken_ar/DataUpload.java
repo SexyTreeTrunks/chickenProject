@@ -43,7 +43,7 @@ public class DataUpload extends AsyncTask<String, Void, String> {
                 String userId = (String) params[1];
                 String ratingStars = (String) params[2];
                 String contents = (String) params[3];
-                String link = "http://d5f7bde7.ngrok.io/input_review.php";
+                String link = "http://6172d84f.ngrok.io/input_review.php";
                 String data = URLEncoder.encode("restaurantName", "UTF-8") + "=" + URLEncoder.encode(name, "UTF-8");
                 data += "&" + URLEncoder.encode("userId", "UTF-8") + "=" + URLEncoder.encode(userId, "UTF-8");
                 data += "&" + URLEncoder.encode("ratingStars", "UTF-8") + "=" + URLEncoder.encode(ratingStars, "UTF-8");
@@ -78,7 +78,7 @@ public class DataUpload extends AsyncTask<String, Void, String> {
                 String type = (String) params[0];
                 String restaurantName = (String) params[1];
                 String ratingStars = (String) params[2];
-                String link = "http://d5f7bde7.ngrok.io/input_review.php";
+                String link = "http://6172d84f.ngrok.io/input_review.php";
                 String data = URLEncoder.encode("type", "UTF-8") + "=" + URLEncoder.encode(type, "UTF-8");
                 data += "&" + URLEncoder.encode("restaurantName", "UTF-8") + "=" + URLEncoder.encode(restaurantName, "UTF-8");
                 data += "&" + URLEncoder.encode("ratingStars", "UTF-8") + "=" + URLEncoder.encode(ratingStars, "UTF-8");

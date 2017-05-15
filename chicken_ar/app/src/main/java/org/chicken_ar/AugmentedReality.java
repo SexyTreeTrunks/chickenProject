@@ -26,9 +26,6 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Lak Shin Jeong on 2017-03-29.
- */
 
 public class AugmentedReality extends AppCompatActivity implements DiningDataDownload.Listener, LocationListener, SensorEventListener {
 
@@ -41,7 +38,7 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
     TextView textView;
     float screenWidth;
     float screenHeight;
-    int userDegree;
+    float userDegree;
     float gradient;
     int count = 0;
 
@@ -82,8 +79,6 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
         new DiningDataDownload(this).execute(CategoryType.DINING_JAPANESE);
         new DiningDataDownload(this).execute(CategoryType.DINING_CHINESE);
         new DiningDataDownload(this).execute(CategoryType.DINING_WESTERN);
-
-
 
         getLocation();
         myLocation = new BuildingInfo(lon, lat, 0);
@@ -171,7 +166,7 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
-            userDegree = (int)event.values[0];
+            userDegree = event.values[0];
             gradient = event.values[1];
             getStoreNearBy();
         }
@@ -220,7 +215,7 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
                         storeTypeInt = Integer.parseInt(storeType);
                         int bearing = (int) bearingP1toP2(myLocation.lat, myLocation.lon, Double.parseDouble(temp.getLatitude()),
                                 Double.parseDouble(temp.getLongitude()));
-                        int degree = userDegree - bearing;
+                        float degree = userDegree - bearing;
                         double distance = calculateDistance(myLocation.lat, myLocation.lon, Double.parseDouble(temp.getLatitude()),
                                 Double.parseDouble(temp.getLongitude()));
 
@@ -236,10 +231,10 @@ public class AugmentedReality extends AppCompatActivity implements DiningDataDow
         count = 0;
     }
 
-    private void setImage(String storeName, int storeTypeInt, int degree, double distance) {
+    private void setImage(String storeName, int storeTypeInt, float degree, double distance) {
         if(degree >= -20 && degree <= 20) {
             textViewAR[count].setX((float) ((screenWidth - 93) / 2 + screenWidth * (-(degree) / viewAngle)));
-            textViewAR[count].setY((screenHeight - 150) / 2 + (-((int) gradient + 90) / (float) 90) * (screenHeight));
+            textViewAR[count].setY((screenHeight - 150) / 2 + (-(int)(gradient + (distance/10) + 90) / (float) 90) * (screenHeight));
             textViewAR[count].setText((int)distance + "m\n" + storeName);
             textViewAR[count].setVisibility(View.VISIBLE);
 

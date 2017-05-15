@@ -25,7 +25,6 @@ public class LoginActivity extends AppCompatActivity {
             "foo@example.com:hello", "bar@example.com:world"
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         clickLoginButton();
         clickSignUpButton();
     }
+
     void initializeVariable() {
         buttonLogin = (Button)findViewById(R.id.buttonLogin);
         buttonSignUp = (Button)findViewById(R.id.buttonSignUp);
@@ -64,7 +64,8 @@ public class LoginActivity extends AppCompatActivity {
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: NEED TO FILL UP
+                Intent intent = new Intent(getApplicationContext(), NewAccount.class);
+                startActivity(intent);
             }
         });
     }

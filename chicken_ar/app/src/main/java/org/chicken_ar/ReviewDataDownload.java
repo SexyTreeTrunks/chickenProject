@@ -22,14 +22,11 @@ import java.util.List;
 public class ReviewDataDownload extends AsyncTask<String, Void, ReviewListResponse> {
 
     public ReviewDataDownload(ReviewDataDownload.Listener listener) {
-
         mListener = listener;
     }
 
     public interface Listener {
-
         void onLoaded(List<ReviewInfo> reviewInfoList);
-
         void onError();
     }
 
@@ -37,13 +34,9 @@ public class ReviewDataDownload extends AsyncTask<String, Void, ReviewListRespon
 
     @Override
     protected void onPostExecute(ReviewListResponse response) {
-
         if (response != null) {
-
             mListener.onLoaded(response.getResult());
-
         } else {
-
             mListener.onError();
         }
     }
@@ -53,9 +46,7 @@ public class ReviewDataDownload extends AsyncTask<String, Void, ReviewListRespon
         try {
             String stringResponse = loadJSON(params[0]);
             Gson gson = new Gson();
-
             return gson.fromJson(stringResponse, ReviewListResponse.class);
-
         } catch (IOException e) {
             Log.e("****ReviewDownload","io exception");
             return null;
@@ -66,7 +57,7 @@ public class ReviewDataDownload extends AsyncTask<String, Void, ReviewListRespon
     }
 
     private String loadJSON(String restaurantName) throws IOException {
-        String URL = "http://d5f7bde7.ngrok.io/get_review_json.php";
+        String URL = "http://6172d84f.ngrok.io/get_review_json.php";
         URL url = new URL(URL);
         URLConnection conn =  url.openConnection();
         conn.setReadTimeout(10000);
@@ -94,6 +85,5 @@ public class ReviewDataDownload extends AsyncTask<String, Void, ReviewListRespon
         in.close();
 
         return response.toString();
-
     }
 }

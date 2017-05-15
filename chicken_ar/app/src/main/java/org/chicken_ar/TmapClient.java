@@ -154,6 +154,7 @@ public class TmapClient extends AsyncTask<String, Void, Void>{
                 } else {
                     coordinates = element.getElementsByTagName("Point").item(0).getTextContent();
                     Log.i("****TmapClient","coordinate: " + coordinates);
+
                     String description = element.getElementsByTagName("description").item(0).getTextContent();
                     pathDescriptions.add(description);
                     /*

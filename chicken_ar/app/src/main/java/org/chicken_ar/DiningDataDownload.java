@@ -1,6 +1,5 @@
 package org.chicken_ar;
 
-
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -20,14 +19,11 @@ public class DiningDataDownload extends AsyncTask<Integer, Void, DiningListRespo
     private String URL;
 
     public DiningDataDownload(Listener listener) {
-
         mListener = listener;
     }
 
     public interface Listener {
-
         void onLoaded(List<DiningInfo> diningInfoList);
-
         void onError();
     }
 
@@ -36,15 +32,12 @@ public class DiningDataDownload extends AsyncTask<Integer, Void, DiningListRespo
     @Override
     protected DiningListResponse doInBackground(Integer... category_input) {
         try {
-
             setRequestURLByType(category_input[0]);
 
             String stringResponse = loadJSON(URL);
             Gson gson = new Gson();
 
             return gson.fromJson(stringResponse, DiningListResponse.class);
-
-
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -58,22 +51,22 @@ public class DiningDataDownload extends AsyncTask<Integer, Void, DiningListRespo
     private void setRequestURLByType(int type) {
         switch (type) {
             case CategoryType.CAFE:
-                URL = "http://d5f7bde7.ngrok.io/get_cafe_json.php";
+                URL = "http://6172d84f.ngrok.io/get_cafe_json.php";
                 break;
             case CategoryType.DINING_KOREA:
-                URL = "http://d5f7bde7.ngrok.io/get_dining_korean_json.php";
+                URL = "http://6172d84f.ngrok.io/get_dining_korean_json.php";
                 break;
             case CategoryType.DINING_SNACK:
-                URL = "http://d5f7bde7.ngrok.io/get_dining_snack_json.php";
+                URL = "http://6172d84f.ngrok.io/get_dining_snack_json.php";
                 break;
             case CategoryType.DINING_JAPANESE:
-                URL = "http://d5f7bde7.ngrok.io/get_dining_japanese_json.php";
+                URL = "http://6172d84f.ngrok.io/get_dining_japanese_json.php";
                 break;
             case CategoryType.DINING_CHINESE:
-                URL = "http://d5f7bde7.ngrok.io/get_dining_chinese_json.php";
+                URL = "http://6172d84f.ngrok.io/get_dining_chinese_json.php";
                 break;
             case CategoryType.DINING_WESTERN:
-                URL = "http://d5f7bde7.ngrok.io/get_dining_western_json.php";
+                URL = "http://6172d84f.ngrok.io/get_dining_western_json.php";
                 break;
         }
     }
@@ -82,17 +75,13 @@ public class DiningDataDownload extends AsyncTask<Integer, Void, DiningListRespo
     protected void onPostExecute(DiningListResponse response) {
 
         if (response != null) {
-
             mListener.onLoaded(response.getResult());
-
         } else {
-
             mListener.onError();
         }
     }
 
     private String loadJSON(String jsonURL) throws IOException {
-
         URL url = new URL(jsonURL);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(10000);
@@ -112,9 +101,7 @@ public class DiningDataDownload extends AsyncTask<Integer, Void, DiningListRespo
                 response.append(line);
                 Log.i("****loadJSON", "http_ok: " + line);
             }
-
             in.close();
-
             return response.toString();
         } else {
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
@@ -125,7 +112,6 @@ public class DiningDataDownload extends AsyncTask<Integer, Void, DiningListRespo
             while ((line = in.readLine()) != null) {
                 Log.i("****loadJSON", "http_error: " + line);
             }
-
             in.close();
             return null;
         }
