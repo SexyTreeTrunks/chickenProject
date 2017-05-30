@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.chicken_ar.CameraActivity">
+
+    <TextureView
+        android:id="@+id/cameraTextureView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:text="경로를 불러오고 있습니다"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:id="@+id/textView"
+        android:background="@color/bright_foreground_material_dark"
+        android:textSize="24sp"
+        android:gravity="center" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollX="30dp"
+        android:visibility="gone"
+        android:background="@drawable/destination_pin"
+        android:id="@+id/destination_pin" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollX="30dp"
+        android:visibility="gone"
+        android:background="@drawable/duck3"
+        android:alpha="0.5"
+        android:id="@+id/duck3" />
+
+</FrameLayout>
